@@ -170,7 +170,14 @@ function createThumbnailNode(game) {
   img.loading = 'lazy';
   setVisible(fallback, false);
 
+  let retriedAltBase = false;
   img.addEventListener('error', () => {
+    if (!retriedAltBase && game.thumbnail) {
+      retriedAltBase = true;
+      const clean = String(game.thumbnail).replace(/^\.?\//, '').replace(/^public\//, '');
+      img.src = assetPrefix === './public' ? `./${clean}` : `./public/${clean}`;
+      return;
+    }
     setVisible(img, false);
     setVisible(fallback, true);
   });
