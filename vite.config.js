@@ -1,4 +1,3 @@
-import tailwindcss from '@tailwindcss/vite';
 import path from 'path';
 import {fileURLToPath} from 'url';
 import {defineConfig} from 'vite';
@@ -7,7 +6,16 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 export default defineConfig(() => {
   return {
-    plugins: [tailwindcss()],
+    // Relative base path ensures assets work on GitHub Pages project subpaths (e.g. /repo-name/)
+    base: './',
+    build: {
+      outDir: 'dist',
+      rollupOptions: {
+        input: {
+          main: path.resolve(__dirname, 'index.html'),
+        },
+      },
+    },
     resolve: {
       alias: {
         '@': path.resolve(__dirname, '.'),

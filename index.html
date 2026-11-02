@@ -21,7 +21,7 @@
       href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Outfit:wght@600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="/style.css" />
+    <link rel="stylesheet" href="./style.css" />
   </head>
   <body>
     <!-- Top Bar Contract: 3 Zones separated by gap-8 -->
@@ -44,7 +44,7 @@
 
     <main class="main-container">
       <!-- Active Game Player View (Hidden until a game is selected) -->
-      <section id="playerSection" class="player-section hidden" aria-label="Game Player">
+      <section id="playerSection" class="player-section hidden" hidden aria-label="Game Player">
         <div class="player-toolbar">
           <button type="button" id="backToCatalogBtn" class="btn-ghost">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
@@ -126,10 +126,10 @@
           <span id="gameCountLabel" class="unboxed-meta">6 titles</span>
         </div>
 
-        <div id="loadingState" class="empty-state hidden">Loading games from games.json...</div>
-        <div id="errorState" class="empty-state hidden">Could not load games.json. Please refresh the page.</div>
+        <div id="loadingState" class="empty-state hidden" hidden>Loading games from games.json...</div>
+        <div id="errorState" class="empty-state hidden" hidden>Could not load games.json. Please refresh the page.</div>
 
-        <div id="emptyState" class="empty-state hidden">
+        <div id="emptyState" class="empty-state hidden" hidden>
           <p id="emptyStateMsg">No matching games found.</p>
           <button type="button" id="clearFiltersBtn" class="btn-ghost">Reset Filters</button>
         </div>
@@ -146,7 +146,7 @@
     </footer>
 
     <!-- Add Game & JSON Inspector Modal -->
-    <div id="addGameModal" class="modal-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div id="addGameModal" class="modal-backdrop hidden" hidden role="dialog" aria-modal="true" aria-labelledby="modalTitle">
       <div class="modal-panel">
         <div class="modal-header">
           <h2 id="modalTitle" class="modal-title">Manage Iframe Catalog</h2>
@@ -201,9 +201,9 @@
           </div>
         </form>
 
-        <div id="jsonViewPane" class="modal-body hidden">
+        <div id="jsonViewPane" class="modal-body hidden" hidden>
           <p class="json-help">
-            All games are stored as iframe entries inside <code>/games.json</code>. Copy or download the updated JSON below to persist changes directly in your repository.
+            All games are stored as iframe entries inside <code>games.json</code>. Copy or download the updated JSON below to persist changes directly in your repository.
           </p>
           <pre id="jsonCodePreview" class="json-code"></pre>
           <div class="modal-actions">
@@ -214,8 +214,8 @@
       </div>
     </div>
 
-    <div id="toastBanner" class="toast hidden" role="status" aria-live="polite"></div>
+    <div id="toastBanner" class="toast hidden" hidden role="status" aria-live="polite"></div>
 
-    <script type="module" src="/script.js"></script>
+    <script type="module" src="./script.js"></script>
   </body>
 </html>

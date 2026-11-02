@@ -3,6 +3,7 @@ const CUSTOM_GAMES_KEY = 'vp_custom_games';
 
 let baseGames = [];
 let allGames = [];
+let assetPrefix = '.'; // '.' when built/Vite dev, './public' when hosted directly from repo root on GitHub Pages
 let favoriteIds = new Set(JSON.parse(localStorage.getItem(FAVORITES_KEY) || '[]'));
 let activeCategory = 'All';
 let searchQuery = '';
@@ -49,14 +50,35 @@ const downloadJsonBtn = document.getElementById('downloadJsonBtn');
 const resetCustomBtn = document.getElementById('resetCustomBtn');
 const toastBanner = document.getElementById('toastBanner');
 
+function setVisible(el, visible) {
+  if (!el) return;
+  el.classList.toggle('hidden', !visible);
+  el.hidden = !visible;
+}
+
+/**
+ * Resolves local paths so they work on Vite dev, Vite dist/, and raw GitHub Pages subpaths.
+ */
+function resolveLocalUrl(rawUrl) {
+  const url = String(rawUrl || '').trim();
+  if (!url || /^(https?:|data:|blob:|\/\/)/i.test(url)) {
+    return url;
+  }
+  const clean = url.replace(/^\.?\//, '');
+  if (clean.startsWith('public/')) {
+    return `./${clean}`;
+  }
+  return `${assetPrefix}/${clean}`;
+}
+
 let toastTimer = null;
 function showToast(message) {
   if (!toastBanner) return;
   toastBanner.textContent = message;
-  toastBanner.classList.remove('hidden');
+  setVisible(toastBanner, true);
   clearTimeout(toastTimer);
   toastTimer = setTimeout(() => {
-    toastBanner.classList.add('hidden');
+    setVisible(toastBanner, false);
   }, 2600);
 }
 
@@ -113,14 +135,14 @@ function createIframeElement(iframeValue, title) {
     const doc = parser.parseFromString(trimmed, 'text/html');
     const parsed = doc.querySelector('iframe');
     if (parsed && parsed.getAttribute('src')) {
-      iframe.src = parsed.getAttribute('src') || '';
+      iframe.src = resolveLocalUrl(parsed.getAttribute('src') || '');
       const allow = parsed.getAttribute('allow');
       if (allow) iframe.setAttribute('allow', allow);
       return iframe;
     }
   }
 
-  iframe.src = trimmed;
+  iframe.src = resolveLocalUrl(trimmed);
   return iframe;
 }
 
@@ -142,15 +164,15 @@ function createThumbnailNode(game) {
   const wrapper = document.createDocumentFragment();
   const img = document.createElement('img');
   img.className = 'card-thumb-img';
-  img.src = game.thumbnail;
+  img.src = resolveLocalUrl(game.thumbnail);
   img.alt = `${game.title} cover illustration`;
   img.referrerPolicy = 'no-referrer';
   img.loading = 'lazy';
-  fallback.classList.add('hidden');
+  setVisible(fallback, false);
 
   img.addEventListener('error', () => {
-    img.classList.add('hidden');
-    fallback.classList.remove('hidden');
+    setVisible(img, false);
+    setVisible(fallback, true);
   });
 
   wrapper.appendChild(img);
@@ -207,7 +229,6 @@ function buildGameCard(game, compact = false) {
   topRow.appendChild(titleBtn);
   topRow.appendChild(favBtn);
 
-  // Clean unboxed metadata with typographic separator
   const metaLine = document.createElement('div');
   metaLine.className = 'unboxed-meta';
   metaLine.textContent = `${game.category || 'Arcade'} · ${game.controls || 'Keyboard / Mouse'}`;
@@ -275,7 +296,7 @@ function renderCatalog() {
 
   gamesGrid.innerHTML = '';
   if (filtered.length === 0) {
-    emptyState?.classList.remove('hidden');
+    setVisible(emptyState, true);
     if (emptyStateMsg) {
       emptyStateMsg.textContent =
         activeCategory === 'Favorites' && favoriteIds.size === 0
@@ -283,7 +304,7 @@ function renderCatalog() {
           : 'No games match your current search or category filter.';
     }
   } else {
-    emptyState?.classList.add('hidden');
+    setVisible(emptyState, false);
     filtered.forEach((game) => {
       gamesGrid.appendChild(buildGameCard(game, false));
     });
@@ -295,8 +316,8 @@ function openGame(gameId, updateHash = true) {
   if (!found) return;
   currentGame = found;
 
-  catalogSection?.classList.add('hidden');
-  playerSection?.classList.remove('hidden');
+  setVisible(catalogSection, false);
+  setVisible(playerSection, true);
   syncActiveCategoryUI();
 
   if (activeGameTitle) activeGameTitle.textContent = found.title;
@@ -337,8 +358,8 @@ function mountCurrentIframe() {
 function closeGame(updateHash = true) {
   currentGame = null;
   if (iframeMount) iframeMount.innerHTML = '';
-  playerSection?.classList.add('hidden');
-  catalogSection?.classList.remove('hidden');
+  setVisible(playerSection, false);
+  setVisible(catalogSection, true);
   if (wideMode) {
     wideMode = false;
     mainContainer?.classList.remove('wide-mode');
@@ -430,24 +451,24 @@ function setModalTab(tabName) {
     b.classList.toggle('active', b.getAttribute('data-modal-tab') === tabName);
   });
   if (tabName === 'json') {
-    addGameForm?.classList.add('hidden');
-    jsonViewPane?.classList.remove('hidden');
+    setVisible(addGameForm, false);
+    setVisible(jsonViewPane, true);
     if (jsonCodePreview) {
       jsonCodePreview.textContent = JSON.stringify(allGames, null, 2);
     }
   } else {
-    jsonViewPane?.classList.add('hidden');
-    addGameForm?.classList.remove('hidden');
+    setVisible(jsonViewPane, false);
+    setVisible(addGameForm, true);
   }
 }
 
 openAddModalBtn?.addEventListener('click', () => {
   setModalTab('add');
-  addGameModal?.classList.remove('hidden');
+  setVisible(addGameModal, true);
 });
 
 function hideModal() {
-  addGameModal?.classList.add('hidden');
+  setVisible(addGameModal, false);
 }
 
 closeModalBtn?.addEventListener('click', hideModal);
@@ -534,19 +555,40 @@ function handleHashRoute() {
 
 window.addEventListener('popstate', handleHashRoute);
 
-async function init() {
-  loadingState?.classList.remove('hidden');
+async function fetchGamesCatalog() {
   try {
-    const res = await fetch('/games.json');
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    baseGames = await res.json();
+    const res = await fetch('./games.json');
+    if (res.ok) {
+      const contentType = res.headers.get('content-type') || '';
+      if (contentType.includes('json') || contentType.includes('text')) {
+        assetPrefix = '.';
+        return await res.json();
+      }
+    }
+  } catch {
+    // Fall through to ./public/games.json for raw unbuilt GitHub Pages deployments
+  }
+
+  const fallbackRes = await fetch('./public/games.json');
+  if (!fallbackRes.ok) {
+    throw new Error(`HTTP ${fallbackRes.status}`);
+  }
+  assetPrefix = './public';
+  return await fallbackRes.json();
+}
+
+async function init() {
+  setVisible(loadingState, true);
+  setVisible(errorState, false);
+  try {
+    baseGames = await fetchGamesCatalog();
     mergeCatalog();
-    loadingState?.classList.add('hidden');
+    setVisible(loadingState, false);
     renderCatalog();
     handleHashRoute();
   } catch {
-    loadingState?.classList.add('hidden');
-    errorState?.classList.remove('hidden');
+    setVisible(loadingState, false);
+    setVisible(errorState, true);
   }
 }
 
