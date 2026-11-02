@@ -1,0 +1,256 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Retro Snake</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; }
+    body {
+      background: #10151c;
+      color: #f8fafc;
+      font-family: system-ui, -apple-system, sans-serif;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+    .hud {
+      width: min(440px, 92vw);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+      font-variant-numeric: tabular-nums;
+    }
+    .title { font-size: 1.35rem; font-weight: 800; color: #10b981; }
+    .metrics { display: flex; gap: 14px; font-size: 0.9rem; color: #cbd5e1; align-items: center; }
+    .metrics strong { color: #fff; }
+    .stage {
+      position: relative;
+      width: min(440px, 92vw);
+      aspect-ratio: 1 / 1;
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,0.1);
+      background: #161e29;
+    }
+    canvas { width: 100%; height: 100%; display: block; }
+    .overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(16, 21, 28, 0.9);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      text-align: center;
+    }
+    .overlay.hidden { display: none; }
+    .overlay h2 { font-size: 1.7rem; margin-bottom: 8px; }
+    .overlay p { font-size: 0.9rem; color: #94a3b8; max-width: 280px; line-height: 1.5; margin-bottom: 18px; }
+    .btn {
+      background: #10b981;
+      color: #06281e;
+      border: none;
+      padding: 10px 22px;
+      border-radius: 8px;
+      font-weight: 700;
+      font-size: 0.95rem;
+      cursor: pointer;
+    }
+    .btn:hover { background: #34d399; }
+    .dpad {
+      display: flex;
+      gap: 8px;
+      margin-top: 12px;
+    }
+    .dpad button {
+      background: #1e2736;
+      color: #cbd5e1;
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 8px;
+      padding: 8px 14px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .dpad button:active { background: #334155; }
+  </style>
+</head>
+<body>
+  <div class="hud">
+    <div class="title">Retro Snake</div>
+    <div class="metrics">
+      <span>Apples: <strong id="score">0</strong></span>
+      <span>Best: <strong id="best">0</strong></span>
+    </div>
+  </div>
+
+  <div class="stage">
+    <canvas id="canvas" width="440" height="440"></canvas>
+    <div class="overlay" id="overlay">
+      <h2 id="ovTitle">Retro Snake</h2>
+      <p id="ovDesc">Collect red apples to grow longer and faster. Avoid hitting the arena walls or your own body.</p>
+      <button class="btn" id="startBtn" type="button">Start Game</button>
+    </div>
+  </div>
+
+  <div class="dpad" aria-label="Directional Controls">
+    <button type="button" data-dir="LEFT">←</button>
+    <button type="button" data-dir="UP">↑</button>
+    <button type="button" data-dir="DOWN">↓</button>
+    <button type="button" data-dir="RIGHT">→</button>
+  </div>
+
+  <script>
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+    const scoreEl = document.getElementById('score');
+    const bestEl = document.getElementById('best');
+    const overlay = document.getElementById('overlay');
+    const ovTitle = document.getElementById('ovTitle');
+    const ovDesc = document.getElementById('ovDesc');
+    const startBtn = document.getElementById('startBtn');
+
+    const GRID = 20;
+    const CELL = canvas.width / GRID;
+    let snake = [];
+    let dir = { x: 1, y: 0 };
+    let nextDir = { x: 1, y: 0 };
+    let food = { x: 12, y: 10 };
+    let score = 0;
+    let best = Number(localStorage.getItem('vp_snake_best') || 0);
+    let timer = null;
+    let state = 'TITLE_MENU';
+    bestEl.textContent = best;
+
+    let audioCtx = null;
+    function tone(freq, dur = 0.07) {
+      try {
+        if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+        const o = audioCtx.createOscillator();
+        const g = audioCtx.createGain();
+        o.type = 'triangle';
+        o.frequency.value = freq;
+        g.gain.setValueAtTime(0.07, audioCtx.currentTime);
+        g.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + dur);
+        o.connect(g); g.connect(audioCtx.destination);
+        o.start(); o.stop(audioCtx.currentTime + dur);
+      } catch (_) {}
+    }
+
+    function placeFood() {
+      const open = [];
+      for (let x = 0; x < GRID; x++) {
+        for (let y = 0; y < GRID; y++) {
+          if (!snake.some(s => s.x === x && s.y === y)) open.push({ x, y });
+        }
+      }
+      if (open.length) food = open[Math.floor(Math.random() * open.length)];
+    }
+
+    function draw() {
+      for (let x = 0; x < GRID; x++) {
+        for (let y = 0; y < GRID; y++) {
+          ctx.fillStyle = (x + y) % 2 === 0 ? '#161e29' : '#19222f';
+          ctx.fillRect(x * CELL, y * CELL, CELL, CELL);
+        }
+      }
+
+      // Draw Apple
+      ctx.fillStyle = '#ef4444';
+      ctx.beginPath();
+      ctx.arc(food.x * CELL + CELL / 2, food.y * CELL + CELL / 2, CELL * 0.38, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Draw Snake
+      snake.forEach((seg, idx) => {
+        ctx.fillStyle = idx === 0 ? '#34d399' : '#10b981';
+        const pad = idx === 0 ? 1.5 : 2.5;
+        ctx.beginPath();
+        ctx.roundRect(seg.x * CELL + pad, seg.y * CELL + pad, CELL - pad * 2, CELL - pad * 2, 5);
+        ctx.fill();
+      });
+    }
+
+    function gameOver() {
+      state = 'GAME_OVER';
+      clearInterval(timer);
+      tone(160, 0.2);
+      ovTitle.textContent = 'Game Over';
+      ovDesc.textContent = `Apples Collected: ${score} · High Score: ${best}`;
+      startBtn.textContent = 'Play Again';
+      overlay.classList.remove('hidden');
+    }
+
+    function step() {
+      dir = nextDir;
+      const head = { x: snake[0].x + dir.x, y: snake[0].y + dir.y };
+      if (head.x < 0 || head.x >= GRID || head.y < 0 || head.y >= GRID || snake.some(s => s.x === head.x && s.y === head.y)) {
+        return gameOver();
+      }
+      snake.unshift(head);
+      if (head.x === food.x && head.y === food.y) {
+        score++;
+        scoreEl.textContent = score;
+        if (score > best) {
+          best = score;
+          localStorage.setItem('vp_snake_best', String(best));
+          bestEl.textContent = best;
+        }
+        tone(620, 0.08);
+        placeFood();
+      } else {
+        snake.pop();
+      }
+      draw();
+    }
+
+    function startGame() {
+      clearInterval(timer);
+      snake = [{ x: 6, y: 10 }, { x: 5, y: 10 }, { x: 4, y: 10 }];
+      dir = { x: 1, y: 0 };
+      nextDir = { x: 1, y: 0 };
+      score = 0;
+      scoreEl.textContent = '0';
+      state = 'PLAYING';
+      overlay.classList.add('hidden');
+      placeFood();
+      draw();
+      timer = setInterval(step, 115);
+    }
+
+    function setDirection(name) {
+      if (state !== 'PLAYING') return;
+      if (name === 'LEFT' && dir.x !== 1) nextDir = { x: -1, y: 0 };
+      if (name === 'RIGHT' && dir.x !== -1) nextDir = { x: 1, y: 0 };
+      if (name === 'UP' && dir.y !== 1) nextDir = { x: 0, y: -1 };
+      if (name === 'DOWN' && dir.y !== -1) nextDir = { x: 0, y: 1 };
+    }
+
+    window.addEventListener('keydown', (e) => {
+      const map = {
+        ArrowLeft: 'LEFT', KeyA: 'LEFT',
+        ArrowRight: 'RIGHT', KeyD: 'RIGHT',
+        ArrowUp: 'UP', KeyW: 'UP',
+        ArrowDown: 'DOWN', KeyS: 'DOWN'
+      };
+      if (map[e.code]) {
+        e.preventDefault();
+        setDirection(map[e.code]);
+      }
+    });
+
+    document.querySelectorAll('[data-dir]').forEach(btn => {
+      btn.addEventListener('click', () => setDirection(btn.dataset.dir));
+    });
+
+    startBtn.addEventListener('click', startGame);
+    draw();
+  </script>
+</body>
+</html>

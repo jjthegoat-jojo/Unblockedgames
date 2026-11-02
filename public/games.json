@@ -1,0 +1,56 @@
+[
+  {
+    "id": "2048-classic",
+    "title": "2048 Classic",
+    "category": "Puzzle",
+    "controls": "Arrow Keys or Swipe",
+    "description": "Slide numbered tiles across the 4x4 grid to combine matching values and reach the 2048 tile without running out of moves.",
+    "thumbnail": "/images/thumb_2048_puzzle.jpg",
+    "iframe": "<iframe src=\"/games/2048.html\" title=\"2048 Classic\" width=\"100%\" height=\"100%\" frameborder=\"0\" allowfullscreen loading=\"lazy\"></iframe>"
+  },
+  {
+    "id": "retro-snake",
+    "title": "Retro Snake",
+    "category": "Arcade",
+    "controls": "WASD or Arrow Keys",
+    "description": "Guide the growing serpent across the arena to collect apples and bonus fruit while avoiding walls and your own tail.",
+    "thumbnail": "/images/thumb_retro_snake.jpg",
+    "iframe": "<iframe src=\"/games/snake.html\" title=\"Retro Snake\" width=\"100%\" height=\"100%\" frameborder=\"0\" allowfullscreen loading=\"lazy\"></iframe>"
+  },
+  {
+    "id": "brick-breaker",
+    "title": "Brick Breaker",
+    "category": "Arcade",
+    "controls": "Mouse or Left/Right Arrows",
+    "description": "Deflect the ball with angled paddle shots to shatter multi-layered brick formations and build streak multipliers.",
+    "thumbnail": "/images/thumb_brick_breaker.jpg",
+    "iframe": "<iframe src=\"/games/breakout.html\" title=\"Brick Breaker\" width=\"100%\" height=\"100%\" frameborder=\"0\" allowfullscreen loading=\"lazy\"></iframe>"
+  },
+  {
+    "id": "block-stack",
+    "title": "Block Stack",
+    "category": "Puzzle",
+    "controls": "Arrows to Move/Rotate, Space to Drop",
+    "description": "Rotate and place falling geometric tetrominoes to clear horizontal lines and survive faster gravity levels.",
+    "thumbnail": "/images/thumb_block_stack.jpg",
+    "iframe": "<iframe src=\"/games/tetris.html\" title=\"Block Stack\" width=\"100%\" height=\"100%\" frameborder=\"0\" allowfullscreen loading=\"lazy\"></iframe>"
+  },
+  {
+    "id": "sky-flap",
+    "title": "Sky Flap",
+    "category": "Action",
+    "controls": "Spacebar or Click",
+    "description": "Time each wingbeat with precision to thread narrow pipe gaps and set a new distance record.",
+    "thumbnail": "/images/thumb_sky_flap.jpg",
+    "iframe": "<iframe src=\"/games/flappy.html\" title=\"Sky Flap\" width=\"100%\" height=\"100%\" frameborder=\"0\" allowfullscreen loading=\"lazy\"></iframe>"
+  },
+  {
+    "id": "table-pong",
+    "title": "Table Pong",
+    "category": "Sports",
+    "controls": "Mouse or Up/Down Arrows",
+    "description": "Face off against an adaptive rival in a fast-paced 7-point table tennis rally where paddle edge hits add spin.",
+    "thumbnail": "/images/thumb_table_pong.jpg",
+    "iframe": "<iframe src=\"/games/pong.html\" title=\"Table Pong\" width=\"100%\" height=\"100%\" frameborder=\"0\" allowfullscreen loading=\"lazy\"></iframe>"
+  }
+]

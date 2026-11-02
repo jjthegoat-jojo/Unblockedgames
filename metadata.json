@@ -1,0 +1,6 @@
+{
+  "name": "VaultPlay Unblocked Games",
+  "description": "Fast, lightweight unblocked web games portal built with HTML, CSS, and JavaScript using a JSON-driven iframe game catalog.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
