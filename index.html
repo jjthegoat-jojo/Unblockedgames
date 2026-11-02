@@ -6,12 +6,12 @@
     <title>JordS1.1</title>
     <meta
       name="description"
-      content="JordS1.1 — Unblocked web games organized into customizable columns, powered by HTML, CSS, JavaScript, and games.json."
+      content="JordS1.1 — Unblocked web games featuring a middle Hot List and left-side column organizer, powered by HTML, CSS, JavaScript, and games.json."
     />
     <meta property="og:title" content="JordS1.1" />
     <meta
       property="og:description"
-      content="JordS1.1 — Unblocked web games organized into customizable columns, powered by HTML, CSS, JavaScript, and games.json."
+      content="JordS1.1 — Unblocked web games featuring a middle Hot List and left-side column organizer, powered by HTML, CSS, JavaScript, and games.json."
     />
     <meta property="og:type" content="website" />
     <meta name="twitter:card" content="summary_large_image" />
@@ -24,17 +24,17 @@
     <link rel="stylesheet" href="./style.css" />
   </head>
   <body>
-    <!-- Top Bar Contract: 3 Zones separated by gap-8 (Add Game removed from top right) -->
+    <!-- Top Bar Contract: 3 Zones separated by gap-8 -->
     <header class="site-header">
       <div class="header-inner">
-        <a href="#all" id="brandLink" class="brand-wordmark">JordS1.1</a>
+        <a href="#hot" id="brandLink" class="brand-wordmark">JordS1.1</a>
 
         <nav class="top-nav" aria-label="Primary Navigation">
-          <a href="#all" class="nav-link active" data-nav-cat="All">All Columns</a>
+          <a href="#hot" class="nav-link active" data-nav-cat="Hot List">Hot List</a>
           <a href="#sports" class="nav-link" data-nav-cat="Sports">Sports</a>
           <a href="#racing" class="nav-link" data-nav-cat="Racing">Racing</a>
-          <a href="#action" class="nav-link" data-nav-cat="Action">Action</a>
           <a href="#favorites" class="nav-link" data-nav-cat="Favorites">Favorites</a>
+          <a href="#settings" id="settingsNavLink" class="nav-link" data-nav-page="settings">Settings</a>
         </nav>
 
         <div class="header-action">
@@ -43,12 +43,15 @@
       </div>
     </header>
 
-    <div class="app-shell">
-      <!-- Left Side Game Organizer -->
-      <aside id="sideOrganizer" class="side-organizer" aria-label="Game Organizer">
+    <div id="appShell" class="app-shell">
+      <!-- Left Side Columns Organizer -->
+      <aside id="sideOrganizer" class="side-organizer" aria-label="Game Columns">
         <div class="organizer-header">
-          <h2 class="organizer-title">Side Organizer</h2>
-          <span id="organizerTotalCount" class="unboxed-meta">0 games</span>
+          <div class="organizer-title-wrap">
+            <h2 class="organizer-title">Columns</h2>
+            <span id="organizerTotalCount" class="unboxed-meta">0 games</span>
+          </div>
+          <button type="button" id="openAddColumnModalBtn" class="organizer-add-btn">+ Column</button>
         </div>
 
         <div class="organizer-search-wrap">
@@ -56,19 +59,19 @@
             type="search"
             id="organizerSearchInput"
             class="organizer-search-input"
-            placeholder="Quick find in organizer..."
-            aria-label="Filter side organizer"
+            placeholder="Filter left columns..."
+            aria-label="Filter left columns"
           />
         </div>
 
         <div id="organizerTree" class="organizer-tree"></div>
       </aside>
 
-      <!-- Main Workspace -->
+      <!-- Main Middle Workspace -->
       <main class="main-container">
-        <div class="mobile-organizer-bar">
+        <div id="mobileOrganizerBar" class="mobile-organizer-bar">
           <button type="button" id="toggleOrganizerMobileBtn" class="btn-ghost">
-            <span>Toggle Side Organizer</span>
+            <span>Toggle Left Columns</span>
           </button>
         </div>
 
@@ -79,13 +82,13 @@
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
                 <path d="M19 12H5M12 19l-7-7 7-7" stroke-linecap="round" stroke-linejoin="round" />
               </svg>
-              <span>Back to Columns</span>
+              <span>Back to Hot List</span>
             </button>
 
             <div class="player-actions">
               <label class="column-assign-wrap" for="assignColumnSelect">
-                <span class="sr-only">Move game to column</span>
-                <select id="assignColumnSelect" class="column-select" title="Assign game to a column"></select>
+                <span class="sr-only">Move game to left column</span>
+                <select id="assignColumnSelect" class="column-select" title="Assign game to a left column"></select>
               </label>
 
               <button type="button" id="playerFavBtn" class="btn-ghost" aria-pressed="false">
@@ -113,12 +116,12 @@
           </div>
 
           <div class="more-games-block">
-            <h2 class="section-heading">More in This Column</h2>
+            <h2 class="section-heading">More Games You Might Like</h2>
             <div id="relatedGrid" class="games-grid compact-grid"></div>
           </div>
         </section>
 
-        <!-- Columns / Catalog View -->
+        <!-- Middle Hot List / Catalog View -->
         <section id="catalogSection" class="catalog-section">
           <div class="workspace-toolbar">
             <div class="search-input-wrap">
@@ -130,29 +133,24 @@
                 type="search"
                 id="searchInput"
                 class="search-input"
-                placeholder="Search across all games and columns..."
+                placeholder="Search across all games..."
                 aria-label="Search games"
               />
             </div>
 
             <div class="toolbar-controls">
-              <div class="view-mode-bar" role="group" aria-label="Layout Mode">
-                <button type="button" class="filter-tab active" data-layout="columns">Columns</button>
-                <button type="button" class="filter-tab" data-layout="grid">Grid</button>
-              </div>
-
-              <button type="button" id="openAddColumnModalBtn" class="btn-ghost">
-                <span>+ Add Column</span>
+              <button type="button" id="shuffleHotBtn" class="btn-ghost">
+                <span>Shuffle Hot List</span>
               </button>
             </div>
           </div>
 
           <div class="filter-bar-row">
-            <div class="filter-bar" id="categoryFilterBar" role="tablist" aria-label="Filter by column"></div>
+            <div class="filter-bar" id="categoryFilterBar" role="tablist" aria-label="Filter games"></div>
           </div>
 
           <div class="catalog-header">
-            <h1 id="catalogHeading" class="section-heading">All Game Columns</h1>
+            <h1 id="catalogHeading" class="section-heading">Hot List</h1>
             <span id="gameCountLabel" class="unboxed-meta">Loading...</span>
           </div>
 
@@ -161,26 +159,26 @@
 
           <div id="emptyState" class="empty-state hidden" hidden>
             <p id="emptyStateMsg">No matching games found.</p>
-            <button type="button" id="clearFiltersBtn" class="btn-ghost">Reset Filters</button>
+            <button type="button" id="clearFiltersBtn" class="btn-ghost">Back to Hot List</button>
           </div>
 
-          <!-- Multi-Column Organizer Board -->
-          <div id="columnsBoard" class="columns-board"></div>
-
-          <!-- Optional Flat Grid View -->
-          <div id="gamesGrid" class="games-grid hidden" hidden></div>
+          <!-- Middle Hot List / Filtered Games Grid -->
+          <div id="gamesGrid" class="games-grid"></div>
         </section>
+
+        <!-- Blank Settings Page (Next to Favorites) -->
+        <section id="settingsSection" class="settings-section hidden" hidden aria-label="Settings"></section>
       </main>
     </div>
 
     <footer class="site-footer">
       <div class="footer-inner">
         <span>JordS1.1</span>
-        <span class="unboxed-meta">Column-Organized Unblocked Games Portal</span>
+        <span class="unboxed-meta">Unblocked Games Portal</span>
       </div>
     </footer>
 
-    <!-- Add Custom Column Modal -->
+    <!-- Add / Organize Left Column Modal -->
     <div id="addColumnModal" class="modal-backdrop hidden" hidden role="dialog" aria-modal="true" aria-labelledby="colModalTitle">
       <div class="modal-panel">
         <div class="modal-header">

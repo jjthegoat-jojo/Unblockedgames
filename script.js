@@ -1,6 +1,7 @@
 const FAVORITES_KEY = 'jords_favorite_ids';
 const CUSTOM_COLUMNS_KEY = 'jords_custom_columns';
 const COLUMN_ASSIGNMENTS_KEY = 'jords_column_assignments';
+const HOT_LIST_KEY = 'jords_hot_list_ids';
 
 // Strict sandbox blocks window.open, target="_blank", and window.top.location redirects
 const STRICT_SANDBOX =
@@ -20,15 +21,44 @@ const BUILTIN_COLUMN_ORDER = [
   'Arcade'
 ];
 
+const DEFAULT_HOT_LIST_IDS = [
+  'retro-bowl',
+  'boxing-random',
+  'minecraft-1-8-8',
+  'bullet-force',
+  'paper-io-2',
+  'football-masters',
+  'tetris',
+  'raft-wars-multiplayer',
+  'stickman-bike',
+  'kart-race-3d',
+  'super-star-car',
+  'virtua-racing',
+  'idle-digging-tycoon',
+  'basket-swooshes',
+  'fortz',
+  'shortcut-race',
+  'sprunki-adventure-4',
+  'three-goblets',
+  'heart-star',
+  'cubito-mayhem',
+  'scale-the-wheels',
+  'paper-io',
+  'super-hexbee-merger',
+  'eliza-mall-mania'
+];
+
+const HOT_LIST_COUNT = 24;
+
 let allGames = [];
 let assetPrefix = '.';
-let favoriteIds = new Set(JSON.parse(localStorage.getItem(FAVORITES_KEY) || '[]'));
+let favoriteIds = new Set(loadJsonStorage(FAVORITES_KEY, []));
 let customColumns = loadJsonStorage(CUSTOM_COLUMNS_KEY, []);
 let columnOverrides = loadJsonStorage(COLUMN_ASSIGNMENTS_KEY, {});
-let expandedColumns = new Set();
+let hotListIds = loadJsonStorage(HOT_LIST_KEY, []);
 
-let activeCategory = 'All';
-let layoutMode = 'columns';
+let activeView = 'catalog'; // 'catalog' | 'player' | 'settings'
+let activeCategory = 'Hot List';
 let searchQuery = '';
 let organizerQuery = '';
 let currentGame = null;
@@ -37,8 +67,8 @@ let wideMode = false;
 // DOM Elements
 const catalogSection = document.getElementById('catalogSection');
 const playerSection = document.getElementById('playerSection');
+const settingsSection = document.getElementById('settingsSection');
 const mainContainer = document.querySelector('.main-container');
-const columnsBoard = document.getElementById('columnsBoard');
 const gamesGrid = document.getElementById('gamesGrid');
 const relatedGrid = document.getElementById('relatedGrid');
 const categoryFilterBar = document.getElementById('categoryFilterBar');
@@ -51,9 +81,12 @@ const gameCountLabel = document.getElementById('gameCountLabel');
 const searchInput = document.getElementById('searchInput');
 const clearFiltersBtn = document.getElementById('clearFiltersBtn');
 const randomGameBtn = document.getElementById('randomGameBtn');
+const shuffleHotBtn = document.getElementById('shuffleHotBtn');
+const settingsNavLink = document.getElementById('settingsNavLink');
 
-// Side Organizer Elements
+// Left Side Columns Organizer Elements
 const sideOrganizer = document.getElementById('sideOrganizer');
+const mobileOrganizerBar = document.getElementById('mobileOrganizerBar');
 const organizerTree = document.getElementById('organizerTree');
 const organizerTotalCount = document.getElementById('organizerTotalCount');
 const organizerSearchInput = document.getElementById('organizerSearchInput');
@@ -130,6 +163,56 @@ function showToast(message) {
   toastTimer = setTimeout(() => {
     setVisible(toastBanner, false);
   }, 2600);
+}
+
+function pickRandomHotListIds() {
+  if (!allGames.length) return [];
+  const pool = [...allGames];
+  for (let i = pool.length - 1; i > 0; i -= 1) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [pool[i], pool[j]] = [pool[j], pool[i]];
+  }
+  return pool.slice(0, Math.min(HOT_LIST_COUNT, pool.length)).map((g) => g.id);
+}
+
+function ensureHotListInitialized() {
+  if (!allGames.length) return;
+  const gameMap = new Map(allGames.map((g) => [g.id, g]));
+  const validSaved = Array.isArray(hotListIds) ? hotListIds.filter((id) => gameMap.has(id)) : [];
+  if (validSaved.length >= Math.min(12, allGames.length)) {
+    hotListIds = validSaved;
+    return;
+  }
+
+  const seeded = DEFAULT_HOT_LIST_IDS.filter((id) => gameMap.has(id));
+  if (seeded.length < Math.min(HOT_LIST_COUNT, allGames.length)) {
+    const used = new Set(seeded);
+    const extras = pickRandomHotListIds().filter((id) => !used.has(id));
+    seeded.push(...extras.slice(0, HOT_LIST_COUNT - seeded.length));
+  }
+  hotListIds = seeded.slice(0, HOT_LIST_COUNT);
+  localStorage.setItem(HOT_LIST_KEY, JSON.stringify(hotListIds));
+}
+
+function shuffleHotList() {
+  if (!allGames.length) return;
+  hotListIds = pickRandomHotListIds();
+  localStorage.setItem(HOT_LIST_KEY, JSON.stringify(hotListIds));
+  activeCategory = 'Hot List';
+  searchQuery = '';
+  if (searchInput) searchInput.value = '';
+  if (activeView !== 'catalog') {
+    showCatalogView(true);
+  } else {
+    renderCatalog();
+    syncTopNavState();
+  }
+  showToast('Hot List updated with new random games');
+}
+
+function getHotListGames() {
+  const gameMap = new Map(allGames.map((g) => [g.id, g]));
+  return hotListIds.map((id) => gameMap.get(id)).filter(Boolean);
 }
 
 function getGameColumn(game) {
@@ -278,20 +361,33 @@ function createThumbnailNode(game) {
   return wrapper;
 }
 
+function syncTopNavState() {
+  document.querySelectorAll('[data-nav-cat]').forEach((link) => {
+    const isMatch =
+      activeView === 'catalog' && link.getAttribute('data-nav-cat') === activeCategory;
+    link.classList.toggle('active', isMatch);
+  });
+
+  if (settingsNavLink) {
+    settingsNavLink.classList.toggle('active', activeView === 'settings');
+  }
+}
+
 function renderFilterBar() {
   if (!categoryFilterBar) return;
   const cols = getAllColumnNames();
   categoryFilterBar.innerHTML = '';
 
-  const allBtn = document.createElement('button');
-  allBtn.type = 'button';
-  allBtn.className = `filter-tab${activeCategory === 'All' ? ' active' : ''}`;
-  allBtn.textContent = 'All Columns';
-  allBtn.addEventListener('click', () => {
-    activeCategory = 'All';
+  const hotBtn = document.createElement('button');
+  hotBtn.type = 'button';
+  hotBtn.className = `filter-tab${activeCategory === 'Hot List' ? ' active' : ''}`;
+  hotBtn.textContent = `Hot List (${getHotListGames().length})`;
+  hotBtn.addEventListener('click', () => {
+    activeCategory = 'Hot List';
     renderCatalog();
+    syncTopNavState();
   });
-  categoryFilterBar.appendChild(allBtn);
+  categoryFilterBar.appendChild(hotBtn);
 
   cols.forEach((colName) => {
     const count =
@@ -307,70 +403,12 @@ function renderFilterBar() {
     btn.addEventListener('click', () => {
       activeCategory = colName;
       renderCatalog();
+      syncTopNavState();
     });
     categoryFilterBar.appendChild(btn);
   });
 
-  document.querySelectorAll('[data-nav-cat]').forEach((link) => {
-    link.classList.toggle('active', link.getAttribute('data-nav-cat') === activeCategory && !currentGame);
-  });
-}
-
-function buildColumnRow(game) {
-  const row = document.createElement('div');
-  row.className = 'col-game-row';
-
-  const mainBtn = document.createElement('button');
-  mainBtn.type = 'button';
-  mainBtn.className = 'col-game-main-btn';
-
-  if (game.thumbnail) {
-    const img = document.createElement('img');
-    img.className = 'col-game-thumb';
-    img.src = resolveLocalUrl(game.thumbnail);
-    img.alt = '';
-    img.referrerPolicy = 'no-referrer';
-    img.loading = 'lazy';
-    img.addEventListener('error', () => {
-      img.replaceWith(createMiniFallback(game.title, 'col-game-fallback'));
-    });
-    mainBtn.appendChild(img);
-  } else {
-    mainBtn.appendChild(createMiniFallback(game.title, 'col-game-fallback'));
-  }
-
-  const info = document.createElement('div');
-  info.className = 'col-game-info';
-  const nameEl = document.createElement('div');
-  nameEl.className = 'col-game-name';
-  nameEl.textContent = game.title;
-  const subEl = document.createElement('div');
-  subEl.className = 'col-game-sub';
-  subEl.textContent = game.controls || 'Keyboard / Mouse';
-  info.appendChild(nameEl);
-  info.appendChild(subEl);
-  mainBtn.appendChild(info);
-
-  mainBtn.addEventListener('click', () => openGame(game.id));
-
-  const isFav = favoriteIds.has(game.id);
-  const favBtn = document.createElement('button');
-  favBtn.type = 'button';
-  favBtn.className = `fav-star-btn${isFav ? ' favorited' : ''}`;
-  favBtn.setAttribute('aria-label', isFav ? 'Remove from favorites' : 'Save to favorites');
-  favBtn.innerHTML = `
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="${isFav ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2" aria-hidden="true">
-      <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" stroke-linejoin="round"></polygon>
-    </svg>
-  `;
-  favBtn.addEventListener('click', (e) => {
-    e.stopPropagation();
-    toggleFavorite(game.id);
-  });
-
-  row.appendChild(mainBtn);
-  row.appendChild(favBtn);
-  return row;
+  syncTopNavState();
 }
 
 function buildGameCard(game, compact = false) {
@@ -456,7 +494,7 @@ function deleteCustomColumn(colName) {
       delete columnOverrides[gameId];
     }
   });
-  if (activeCategory === colName) activeCategory = 'All';
+  if (activeCategory === colName) activeCategory = 'Hot List';
   saveColumnState();
   renderAll();
   showToast(`Removed column "${colName}"`);
@@ -464,150 +502,69 @@ function deleteCustomColumn(colName) {
 
 function renderCatalog() {
   renderFilterBar();
+  const hasSearch = searchQuery.trim().length > 0;
   const matched = getSearchMatchedGames();
 
-  const filtered =
-    activeCategory === 'All'
-      ? matched
-      : activeCategory === 'Favorites'
-        ? matched.filter((g) => favoriteIds.has(g.id))
-        : matched.filter((g) => getGameColumn(g) === activeCategory);
+  let displayed = [];
+  if (activeCategory === 'Hot List') {
+    displayed = hasSearch ? matched : getHotListGames();
+  } else if (activeCategory === 'Favorites') {
+    displayed = matched.filter((g) => favoriteIds.has(g.id));
+  } else {
+    displayed = matched.filter((g) => getGameColumn(g) === activeCategory);
+  }
 
   if (catalogHeading) {
-    catalogHeading.textContent = activeCategory === 'All' ? 'All Game Columns' : `${activeCategory} Column`;
-  }
-  if (gameCountLabel) {
-    gameCountLabel.textContent = `${filtered.length} ${filtered.length === 1 ? 'game' : 'games'}`;
+    if (activeCategory === 'Hot List' && !hasSearch) {
+      catalogHeading.textContent = 'Hot List';
+    } else if (activeCategory === 'Hot List' && hasSearch) {
+      catalogHeading.textContent = 'Search Results';
+    } else {
+      catalogHeading.textContent = activeCategory;
+    }
   }
 
-  if (filtered.length === 0 && (activeCategory !== 'All' || !customColumns.length)) {
+  if (gameCountLabel) {
+    gameCountLabel.textContent = `${displayed.length} ${displayed.length === 1 ? 'game' : 'games'}`;
+  }
+
+  setVisible(shuffleHotBtn, activeCategory === 'Hot List' && !hasSearch);
+
+  if (displayed.length === 0) {
     setVisible(emptyState, true);
-    setVisible(columnsBoard, false);
     setVisible(gamesGrid, false);
     if (emptyStateMsg) {
       emptyStateMsg.textContent =
         activeCategory === 'Favorites' && favoriteIds.size === 0
-          ? 'No favorites saved yet. Click the star on any game to pin it to your Favorites column.'
-          : 'No games match your current search or column selection.';
+          ? 'No favorites saved yet. Click the star on any game to save it to Favorites.'
+          : 'No games match your current search or filter.';
     }
     return;
   }
 
   setVisible(emptyState, false);
+  setVisible(gamesGrid, true);
+  if (!gamesGrid) return;
+  gamesGrid.innerHTML = '';
 
-  if (layoutMode === 'columns') {
-    setVisible(columnsBoard, true);
-    setVisible(gamesGrid, false);
-    if (!columnsBoard) return;
-    columnsBoard.innerHTML = '';
+  const limit = hasSearch ? 96 : displayed.length > 96 ? 96 : displayed.length;
+  displayed.slice(0, limit).forEach((g) => {
+    gamesGrid.appendChild(buildGameCard(g, false));
+  });
 
-    const colNames = activeCategory === 'All' ? getAllColumnNames() : [activeCategory];
-
-    colNames.forEach((colName) => {
-      const colGames =
-        colName === 'Favorites'
-          ? matched.filter((g) => favoriteIds.has(g.id))
-          : matched.filter((g) => getGameColumn(g) === colName);
-
-      const isCustom = customColumns.includes(colName);
-      if (colGames.length === 0 && !isCustom) return;
-
-      const colEl = document.createElement('section');
-      colEl.className = 'game-column';
-
-      const header = document.createElement('div');
-      header.className = 'column-header';
-
-      const titleGroup = document.createElement('div');
-      titleGroup.className = 'column-title-group';
-      titleGroup.innerHTML = `
-        <h2 class="column-title">${escapeHtml(colName)}</h2>
-        <span class="unboxed-meta">${colGames.length}</span>
-      `;
-      header.appendChild(titleGroup);
-
-      const actions = document.createElement('div');
-      actions.className = 'column-header-actions';
-
-      if (colName !== 'Favorites') {
-        const addToColBtn = document.createElement('button');
-        addToColBtn.type = 'button';
-        addToColBtn.className = 'column-del-btn';
-        addToColBtn.textContent = '+ Games';
-        addToColBtn.title = `Add games to ${colName}`;
-        addToColBtn.addEventListener('click', () => openColumnModalFor(colName));
-        actions.appendChild(addToColBtn);
-      }
-
-      if (isCustom) {
-        const delBtn = document.createElement('button');
-        delBtn.type = 'button';
-        delBtn.className = 'column-del-btn';
-        delBtn.textContent = 'Remove';
-        delBtn.addEventListener('click', () => deleteCustomColumn(colName));
-        actions.appendChild(delBtn);
-      }
-
-      if (actions.childNodes.length > 0) {
-        header.appendChild(actions);
-      }
-
-      const listEl = document.createElement('div');
-      listEl.className = 'column-items';
-
-      if (colGames.length === 0) {
-        const emptyNote = document.createElement('p');
-        emptyNote.className = 'unboxed-meta';
-        emptyNote.style.padding = '12px 6px';
-        emptyNote.textContent = 'Empty column — open any game and select this column to place games here.';
-        listEl.appendChild(emptyNote);
-      } else {
-        const isExpanded = expandedColumns.has(colName) || activeCategory === colName || searchQuery.trim().length > 0;
-        const limit = isExpanded ? colGames.length : 24;
-        colGames.slice(0, limit).forEach((g) => {
-          listEl.appendChild(buildColumnRow(g));
-        });
-
-        if (colGames.length > limit) {
-          const moreBtn = document.createElement('button');
-          moreBtn.type = 'button';
-          moreBtn.className = 'col-more-btn';
-          moreBtn.textContent = `Show all ${colGames.length} in ${colName}`;
-          moreBtn.addEventListener('click', () => {
-            expandedColumns.add(colName);
-            renderCatalog();
-          });
-          listEl.appendChild(moreBtn);
-        }
-      }
-
-      colEl.appendChild(header);
-      colEl.appendChild(listEl);
-      columnsBoard.appendChild(colEl);
+  if (displayed.length > limit) {
+    const moreWrap = document.createElement('div');
+    moreWrap.style.gridColumn = '1 / -1';
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'col-more-btn';
+    btn.textContent = `Load remaining ${displayed.length - limit} games`;
+    btn.addEventListener('click', () => {
+      displayed.slice(limit).forEach((g) => gamesGrid.insertBefore(buildGameCard(g, false), moreWrap));
+      moreWrap.remove();
     });
-  } else {
-    setVisible(columnsBoard, false);
-    setVisible(gamesGrid, true);
-    if (!gamesGrid) return;
-    gamesGrid.innerHTML = '';
-    const limit = searchQuery.trim() || activeCategory !== 'All' ? filtered.length : 80;
-    filtered.slice(0, limit).forEach((g) => {
-      gamesGrid.appendChild(buildGameCard(g, false));
-    });
-    if (filtered.length > limit) {
-      const moreWrap = document.createElement('div');
-      moreWrap.style.gridColumn = '1 / -1';
-      const btn = document.createElement('button');
-      btn.type = 'button';
-      btn.className = 'col-more-btn';
-      btn.textContent = `Load remaining ${filtered.length - limit} games`;
-      btn.addEventListener('click', () => {
-        filtered.slice(limit).forEach((g) => gamesGrid.insertBefore(buildGameCard(g, false), moreWrap));
-        moreWrap.remove();
-      });
-      moreWrap.appendChild(btn);
-      gamesGrid.appendChild(moreWrap);
-    }
+    moreWrap.appendChild(btn);
+    gamesGrid.appendChild(moreWrap);
   }
 }
 
@@ -639,26 +596,70 @@ function renderOrganizer() {
         ? matchingGames.filter((g) => favoriteIds.has(g.id))
         : matchingGames.filter((g) => getGameColumn(g) === groupName);
 
-    if (items.length === 0 && !customColumns.includes(groupName)) return;
+    const isCustom = customColumns.includes(groupName);
+    if (items.length === 0 && !isCustom && groupName !== 'Favorites') return;
 
     const details = document.createElement('details');
     details.className = 'org-group';
     details.setAttribute('data-group', groupName);
 
     const hasActiveGame = currentGame && items.some((i) => i.id === currentGame.id);
-    const shouldOpen = q.length > 0 || hasActiveGame || openGroups.has(groupName) || (openGroups.size === 0 && idx < 3);
+    const shouldOpen =
+      q.length > 0 ||
+      hasActiveGame ||
+      openGroups.has(groupName) ||
+      (openGroups.size === 0 && idx < 3 && items.length > 0);
 
     const summary = document.createElement('summary');
     summary.className = 'org-summary';
-    summary.innerHTML = `
-      <span class="org-summary-left">
-        <svg class="org-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true">
-          <path d="m9 18 6-6-6-6" stroke-linecap="round" stroke-linejoin="round"></path>
-        </svg>
-        <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${escapeHtml(groupName)}</span>
-      </span>
-      <span class="unboxed-meta">${items.length}</span>
+
+    const leftSpan = document.createElement('span');
+    leftSpan.className = 'org-summary-left';
+    leftSpan.innerHTML = `
+      <svg class="org-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true">
+        <path d="m9 18 6-6-6-6" stroke-linecap="round" stroke-linejoin="round"></path>
+      </svg>
+      <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${escapeHtml(groupName)}</span>
     `;
+
+    const rightSpan = document.createElement('span');
+    rightSpan.className = 'org-summary-right';
+
+    if (groupName !== 'Favorites') {
+      const editBtn = document.createElement('button');
+      editBtn.type = 'button';
+      editBtn.className = 'org-mini-action';
+      editBtn.textContent = '+';
+      editBtn.title = `Add or organize games in ${groupName}`;
+      editBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        openColumnModalFor(groupName);
+      });
+      rightSpan.appendChild(editBtn);
+    }
+
+    if (isCustom) {
+      const delBtn = document.createElement('button');
+      delBtn.type = 'button';
+      delBtn.className = 'org-mini-action danger';
+      delBtn.textContent = '✕';
+      delBtn.title = `Remove column ${groupName}`;
+      delBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        deleteCustomColumn(groupName);
+      });
+      rightSpan.appendChild(delBtn);
+    }
+
+    const countSpan = document.createElement('span');
+    countSpan.className = 'unboxed-meta';
+    countSpan.textContent = String(items.length);
+    rightSpan.appendChild(countSpan);
+
+    summary.appendChild(leftSpan);
+    summary.appendChild(rightSpan);
 
     const list = document.createElement('div');
     list.className = 'org-list';
@@ -667,6 +668,16 @@ function renderOrganizer() {
     function populateList() {
       if (populated) return;
       populated = true;
+      if (items.length === 0) {
+        const emptyRow = document.createElement('div');
+        emptyRow.className = 'unboxed-meta';
+        emptyRow.style.padding = '6px 8px';
+        emptyRow.textContent =
+          groupName === 'Favorites' ? 'Star any game to save it here.' : 'No games in this column yet.';
+        list.appendChild(emptyRow);
+        return;
+      }
+
       items.forEach((game) => {
         const btn = document.createElement('button');
         btn.type = 'button';
@@ -722,14 +733,71 @@ function renderAll() {
   renderOrganizer();
 }
 
+function resetWideMode() {
+  if (wideMode) {
+    wideMode = false;
+    mainContainer?.classList.remove('wide-mode');
+    iframeStage?.classList.remove('wide-stage');
+    if (theaterToggleBtn) theaterToggleBtn.textContent = 'Wide View';
+  }
+}
+
+function openSettingsPage(updateHash = true) {
+  currentGame = null;
+  if (iframeMount) iframeMount.innerHTML = '';
+  resetWideMode();
+  activeView = 'settings';
+
+  setVisible(catalogSection, false);
+  setVisible(playerSection, false);
+  setVisible(settingsSection, true);
+  setVisible(sideOrganizer, false);
+  setVisible(mobileOrganizerBar, false);
+  syncTopNavState();
+
+  if (updateHash) {
+    window.history.pushState(null, '', '#settings');
+  }
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function showCatalogView(updateHash = true) {
+  currentGame = null;
+  if (iframeMount) iframeMount.innerHTML = '';
+  resetWideMode();
+  activeView = 'catalog';
+
+  setVisible(settingsSection, false);
+  setVisible(playerSection, false);
+  setVisible(catalogSection, true);
+  setVisible(sideOrganizer, true);
+  mobileOrganizerBar?.classList.remove('hidden');
+  if (mobileOrganizerBar) mobileOrganizerBar.hidden = false;
+
+  renderAll();
+  syncTopNavState();
+
+  if (updateHash) {
+    const slug = activeCategory === 'Hot List' ? 'hot' : activeCategory.toLowerCase();
+    window.history.pushState(null, '', `#${encodeURIComponent(slug)}`);
+  }
+}
+
 function openGame(gameId, updateHash = true) {
   const found = allGames.find((g) => g.id === gameId);
   if (!found) return;
   currentGame = found;
+  activeView = 'player';
 
+  setVisible(settingsSection, false);
   setVisible(catalogSection, false);
   setVisible(playerSection, true);
+  setVisible(sideOrganizer, true);
+  mobileOrganizerBar?.classList.remove('hidden');
+  if (mobileOrganizerBar) mobileOrganizerBar.hidden = false;
+
   renderOrganizer();
+  syncTopNavState();
 
   const col = getGameColumn(found);
   if (activeGameTitle) activeGameTitle.textContent = found.title;
@@ -741,8 +809,9 @@ function openGame(gameId, updateHash = true) {
   mountCurrentIframe();
 
   if (relatedGrid) {
+    const hotMatches = getHotListGames().filter((g) => g.id !== found.id).slice(0, 6);
     const sameCol = allGames.filter((g) => g.id !== found.id && getGameColumn(g) === col).slice(0, 6);
-    const others = sameCol.length > 0 ? sameCol : allGames.filter((g) => g.id !== found.id).slice(0, 6);
+    const others = sameCol.length > 0 ? sameCol : hotMatches;
     relatedGrid.innerHTML = '';
     setVisible(relatedGrid.parentElement, others.length > 0);
     others.forEach((g) => relatedGrid.appendChild(buildGameCard(g, true)));
@@ -769,20 +838,7 @@ function mountCurrentIframe() {
 }
 
 function closeGame(updateHash = true) {
-  currentGame = null;
-  if (iframeMount) iframeMount.innerHTML = '';
-  setVisible(playerSection, false);
-  setVisible(catalogSection, true);
-  if (wideMode) {
-    wideMode = false;
-    mainContainer?.classList.remove('wide-mode');
-    iframeStage?.classList.remove('wide-stage');
-    if (theaterToggleBtn) theaterToggleBtn.textContent = 'Wide View';
-  }
-  renderAll();
-  if (updateHash) {
-    window.history.pushState(null, '', '#all');
-  }
+  showCatalogView(updateHash);
 }
 
 // Event Listeners
@@ -800,32 +856,29 @@ toggleOrganizerMobileBtn?.addEventListener('click', () => {
   sideOrganizer?.classList.toggle('mobile-open');
 });
 
-document.querySelectorAll('[data-layout]').forEach((btn) => {
-  btn.addEventListener('click', () => {
-    layoutMode = btn.getAttribute('data-layout') || 'columns';
-    document.querySelectorAll('[data-layout]').forEach((b) => {
-      b.classList.toggle('active', b.getAttribute('data-layout') === layoutMode);
-    });
-    renderCatalog();
-  });
+shuffleHotBtn?.addEventListener('click', () => {
+  shuffleHotList();
 });
 
 document.querySelectorAll('[data-nav-cat]').forEach((link) => {
   link.addEventListener('click', (e) => {
     e.preventDefault();
-    activeCategory = link.getAttribute('data-nav-cat') || 'All';
-    if (currentGame) closeGame(false);
-    renderCatalog();
-    window.history.pushState(null, '', `#${activeCategory.toLowerCase()}`);
+    activeCategory = link.getAttribute('data-nav-cat') || 'Hot List';
+    showCatalogView(true);
   });
+});
+
+settingsNavLink?.addEventListener('click', (e) => {
+  e.preventDefault();
+  openSettingsPage(true);
 });
 
 document.getElementById('brandLink')?.addEventListener('click', (e) => {
   e.preventDefault();
-  activeCategory = 'All';
+  activeCategory = 'Hot List';
   searchQuery = '';
   if (searchInput) searchInput.value = '';
-  closeGame(true);
+  showCatalogView(true);
 });
 
 randomGameBtn?.addEventListener('click', () => {
@@ -835,10 +888,11 @@ randomGameBtn?.addEventListener('click', () => {
 });
 
 clearFiltersBtn?.addEventListener('click', () => {
-  activeCategory = 'All';
+  activeCategory = 'Hot List';
   searchQuery = '';
   if (searchInput) searchInput.value = '';
   renderCatalog();
+  syncTopNavState();
 });
 
 backToCatalogBtn?.addEventListener('click', () => closeGame(true));
@@ -888,7 +942,7 @@ fullscreenBtn?.addEventListener('click', async () => {
   }
 });
 
-// Add Column Modal
+// Add / Organize Left Column Modal
 function renderColumnChecklist(filterText = '') {
   if (!columnGameChecklist) return;
   const q = filterText.trim().toLowerCase();
@@ -933,7 +987,9 @@ function openColumnModalFor(presetColName = '') {
     columnNameInput.readOnly = isExisting;
   }
   if (colModalTitleEl) {
-    colModalTitleEl.textContent = isExisting ? `Organize "${presetColName}" Column` : 'Create New Column';
+    colModalTitleEl.textContent = isExisting
+      ? `Organize "${presetColName}" Column`
+      : 'Create New Column';
   }
   if (colModalSubmitBtn) {
     colModalSubmitBtn.textContent = isExisting ? 'Save Column' : 'Create Column';
@@ -986,13 +1042,16 @@ addColumnForm?.addEventListener('submit', (e) => {
 
   saveColumnState();
   hideColModal();
-  layoutMode = 'columns';
   renderAll();
   showToast(existedBefore ? `Updated column "${rawName}"` : `Created column "${rawName}"`);
 });
 
 function handleHashRoute() {
-  const hash = window.location.hash || '';
+  const hash = (window.location.hash || '').trim();
+  if (hash === '#settings') {
+    openSettingsPage(false);
+    return;
+  }
   if (hash.startsWith('#play=')) {
     const id = decodeURIComponent(hash.slice('#play='.length));
     if (allGames.some((g) => g.id === id)) {
@@ -1000,8 +1059,27 @@ function handleHashRoute() {
       return;
     }
   }
-  if (currentGame) {
-    closeGame(false);
+  if (hash === '#favorites') {
+    activeCategory = 'Favorites';
+    showCatalogView(false);
+    return;
+  }
+  if (hash === '#sports') {
+    activeCategory = 'Sports';
+    showCatalogView(false);
+    return;
+  }
+  if (hash === '#racing') {
+    activeCategory = 'Racing';
+    showCatalogView(false);
+    return;
+  }
+  if (hash === '#hot' || hash === '#all' || !hash) {
+    if (activeView !== 'catalog') {
+      activeCategory = 'Hot List';
+      showCatalogView(false);
+    }
+    return;
   }
 }
 
@@ -1009,19 +1087,22 @@ window.addEventListener('popstate', handleHashRoute);
 
 async function fetchGamesCatalog() {
   try {
-    const res = await fetch('./games.json');
+    const res = await fetch('./games.json', { cache: 'no-cache' });
     if (res.ok) {
-      const contentType = res.headers.get('content-type') || '';
-      if (contentType.includes('json') || contentType.includes('text')) {
-        assetPrefix = '.';
-        return await res.json();
+      const contentType = (res.headers.get('content-type') || '').toLowerCase();
+      if (!contentType.includes('html')) {
+        const parsed = await res.json();
+        if (Array.isArray(parsed)) {
+          assetPrefix = '.';
+          return parsed;
+        }
       }
     }
   } catch {
-    // Fall through to ./public/games.json for raw unbuilt GitHub Pages deployments
+    // Fall through to ./public/games.json for raw branch GitHub Pages deployments
   }
 
-  const fallbackRes = await fetch('./public/games.json');
+  const fallbackRes = await fetch('./public/games.json', { cache: 'no-cache' });
   if (!fallbackRes.ok) {
     throw new Error(`HTTP ${fallbackRes.status}`);
   }
@@ -1034,6 +1115,7 @@ async function init() {
   setVisible(errorState, false);
   try {
     allGames = await fetchGamesCatalog();
+    ensureHotListInitialized();
     setVisible(loadingState, false);
     renderAll();
     handleHashRoute();

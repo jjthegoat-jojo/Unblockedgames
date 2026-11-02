@@ -1,4 +1,4 @@
-name: Deploy VaultPlay to GitHub Pages
+name: Deploy JordS1.1 to GitHub Pages
 
 on:
   push:
@@ -24,16 +24,16 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-
-      - name: Install dependencies and build
+      - name: Assemble static site bundle
         run: |
-          npm install
-          npm run build
+          rm -rf dist
+          mkdir -p dist
+          cp index.html style.css script.js dist/
+          if [ -d public ]; then
+            cp -r public/. dist/
+          fi
           touch dist/.nojekyll
+          node --check dist/script.js
 
       - name: Setup Pages
         id: pages
@@ -49,5 +49,4 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         if: steps.pages.outcome == 'success'
-        continue-on-error: true
         uses: actions/deploy-pages@v4
