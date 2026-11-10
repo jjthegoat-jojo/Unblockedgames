@@ -26,13 +26,7 @@ jobs:
 
       - name: Assemble static site bundle
         run: |
-          rm -rf dist
-          mkdir -p dist
-          cp index.html style.css script.js dist/
-          if [ -d public ]; then
-            cp -r public/. dist/
-          fi
-          touch dist/.nojekyll
+          node scripts/prepare-static-dist.mjs dist
           node --check dist/script.js
 
       - name: Setup Pages

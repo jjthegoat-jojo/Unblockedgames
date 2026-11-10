@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, height=device-height, initial-scale=1.0, user-scalable=no, shrink-to-fit=yes"
+    />
+    <title>Spaceflight Simulator — Jordans V1</title>
+    <link rel="icon" type="image/png" href="./thumb.png" />
+    <style>
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        width: 100%;
+        height: 100%;
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+        background: #05070d;
+        color: #f8fafc;
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        user-select: none;
+        -webkit-user-select: none;
+        touch-action: none;
+      }
+      #unity-container {
+        position: fixed;
+        inset: 0;
+        width: 100vw;
+        height: 100vh;
+      }
+      #unity-canvas {
+        width: 100%;
+        height: 100%;
+        display: block;
+        background: #05070d;
+        touch-action: none;
+        outline: none;
+      }
+      #sfs-boot-overlay {
+        position: fixed;
+        inset: 0;
+        z-index: 20;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 12px;
+        background: radial-gradient(circle at 50% 35%, #162038 0%, #05070d 78%);
+        padding: 24px;
+        text-align: center;
+        transition: opacity 220ms ease;
+      }
+      #sfs-boot-overlay.done {
+        opacity: 0;
+        pointer-events: none;
+      }
+      .sfs-icon {
+        width: 76px;
+        height: 76px;
+        border-radius: 16px;
+        object-fit: cover;
+        border: 1.5px solid rgba(192, 255, 71, 0.55);
+        box-shadow: 0 12px 28px rgba(0, 0, 0, 0.55);
+      }
+      .sfs-brand {
+        font-size: 0.78rem;
+        font-weight: 800;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: #c0ff47;
+      }
+      .sfs-title {
+        font-size: 1.35rem;
+        font-weight: 800;
+        margin: 0;
+        color: #ffffff;
+      }
+      .sfs-status {
+        font-size: 0.84rem;
+        color: rgba(248, 250, 252, 0.72);
+        margin: 0;
+        font-variant-numeric: tabular-nums;
+      }
+      .sfs-bar-track {
+        width: min(280px, 78vw);
+        height: 7px;
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.12);
+        overflow: hidden;
+      }
+      .sfs-bar-fill {
+        width: 6%;
+        height: 100%;
+        border-radius: 999px;
+        background: linear-gradient(90deg, #9747ff, #c0ff47);
+        transition: width 120ms linear;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="unity-container">
+      <canvas id="unity-canvas" tabindex="-1"></canvas>
+    </div>
+
+    <div id="sfs-boot-overlay">
+      <img class="sfs-icon" src="./thumb.png" alt="Spaceflight Simulator" />
+      <div class="sfs-brand">Jordans V1 · Official Build</div>
+      <h1 class="sfs-title">Spaceflight Simulator</h1>
+      <p id="sfs-status" class="sfs-status">Loading rocket assembly &amp; orbital physics... 0%</p>
+      <div class="sfs-bar-track">
+        <div id="sfs-bar-fill" class="sfs-bar-fill"></div>
+      </div>
+    </div>
+
+    <script>
+      (function () {
+        var canvas = document.getElementById('unity-canvas');
+        var overlay = document.getElementById('sfs-boot-overlay');
+        var statusEl = document.getElementById('sfs-status');
+        var fillEl = document.getElementById('sfs-bar-fill');
+
+        function setProgress(pct, text) {
+          var clamped = Math.max(4, Math.min(100, Math.round(pct)));
+          if (fillEl) fillEl.style.width = clamped + '%';
+          if (statusEl && text) statusEl.textContent = text;
+        }
+
+        function hideOverlay() {
+          if (!overlay) return;
+          overlay.classList.add('done');
+          setTimeout(function () {
+            if (overlay && overlay.parentNode) overlay.parentNode.removeChild(overlay);
+          }, 260);
+          try {
+            canvas.focus();
+          } catch (e) {}
+        }
+
+        function bootCdnFallback() {
+          var cdnBase = 'https://cdn.jsdelivr.net/gh/web-ports/spaceflight-simulator@main/';
+          setProgress(8, 'Connecting unblocked CDN mirror...');
+          var loadedBytes = 0;
+
+          function fetchPart(url) {
+            return fetch(url).then(function (res) {
+              if (!res.ok) throw new Error('HTTP ' + res.status);
+              return res.arrayBuffer().then(function (buf) {
+                loadedBytes += buf.byteLength;
+                var mb = (loadedBytes / (1024 * 1024)).toFixed(1);
+                var pct = Math.min(88, (loadedBytes / (92 * 1024 * 1024)) * 88);
+                setProgress(pct, 'Streaming rocket engine data... ' + mb + ' MB');
+                return buf;
+              });
+            });
+          }
+
+          function mergeParts(prefix, count) {
+            var promises = [];
+            for (var i = 1; i <= count; i++) {
+              promises.push(fetchPart(cdnBase + prefix + '.part' + i));
+            }
+            return Promise.all(promises).then(function (buffers) {
+              return URL.createObjectURL(new Blob(buffers));
+            });
+          }
+
+          Promise.all([
+            mergeParts('Build/sfsim.data', 3),
+            mergeParts('Build/sfsim.wasm', 3)
+          ])
+            .then(function (urls) {
+              var script = document.createElement('script');
+              script.src = cdnBase + 'Build/sfsim.loader.js';
+              script.onload = function () {
+                createUnityInstance(
+                  canvas,
+                  {
+                    arguments: [],
+                    dataUrl: urls[0],
+                    frameworkUrl: cdnBase + 'Build/sfsim.framework.js',
+                    codeUrl: urls[1],
+                    streamingAssetsUrl: cdnBase + 'StreamingAssets',
+                    companyName: 'Stef Morojna',
+                    productName: 'Spaceflight Simulator',
+                    productVersion: '1.6.00.16',
+                    showBanner: function () {},
+                    startupErrorHandler: function (err) {
+                      console.error(err);
+                    },
+                    errorHandler: function (err) {
+                      console.error(err);
+                      return true;
+                    }
+                  },
+                  function (progress) {
+                    setProgress(88 + progress * 12, 'Starting orbital engine... ' + Math.round(progress * 100) + '%');
+                  }
+                )
+                  .then(hideOverlay)
+                  .catch(function (err) {
+                    console.error(err);
+                    setProgress(100, 'Tap Refresh or Backup above if WebGL is restricted.');
+                  });
+              };
+              document.body.appendChild(script);
+            })
+            .catch(function (err) {
+              console.error(err);
+              setProgress(100, 'Network restricted — tap Backup above for offline rocket sim.');
+            });
+        }
+
+        var localLoader = document.createElement('script');
+        localLoader.src = './Build/sfs.loader.js';
+        localLoader.onload = function () {
+          createUnityInstance(
+            canvas,
+            {
+              dataUrl: './Build/sfs.data.unityweb',
+              frameworkUrl: './Build/sfs.framework.js.unityweb',
+              codeUrl: './Build/sfs.wasm.unityweb',
+              streamingAssetsUrl: './StreamingAssets',
+              companyName: 'Stef Morojna',
+              productName: 'Spaceflight Simulator',
+              productVersion: '1.5.9.8',
+              showBanner: function () {},
+              startupErrorHandler: function (err) {
+                console.error(err);
+              },
+              errorHandler: function (err) {
+                console.error(err);
+                return true;
+              }
+            },
+            function (progress) {
+              var pct = Math.round(progress * 100);
+              setProgress(pct, 'Loading Spaceflight Simulator... ' + pct + '%');
+            }
+          )
+            .then(hideOverlay)
+            .catch(function () {
+              bootCdnFallback();
+            });
+        };
+        localLoader.onerror = function () {
+          bootCdnFallback();
+        };
+        document.body.appendChild(localLoader);
+      })();
+    </script>
+  </body>
+</html>

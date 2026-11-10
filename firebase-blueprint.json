@@ -1,0 +1,131 @@
+{
+  "entities": {
+    "UserWorkspace": {
+      "title": "UserWorkspace",
+      "description": "Authenticated user's saved game favorites and custom left-side column names (contains no PII).",
+      "type": "object",
+      "properties": {
+        "ownerId": {
+          "type": "string",
+          "description": "Firebase Auth UID of the workspace owner.",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "favoriteIds": {
+          "type": "array",
+          "description": "Bounded list of up to 200 favorited game IDs matching ^[a-zA-Z0-9_\\-]+$ (max 120 chars each)."
+        },
+        "customColumns": {
+          "type": "array",
+          "description": "Bounded list of up to 30 custom column titles matching ^[a-zA-Z0-9 _\\-]+$ (max 32 chars each)."
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Immutable server timestamp when the workspace document was created."
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server timestamp of the latest workspace update."
+        }
+      },
+      "required": [
+        "ownerId",
+        "favoriteIds",
+        "customColumns",
+        "createdAt",
+        "updatedAt"
+      ]
+    },
+    "SuggestionNote": {
+      "title": "SuggestionNote",
+      "description": "Player suggestion note submitted from JordS1.1 Settings to Jordan's AI Studio inbox.",
+      "type": "object",
+      "properties": {
+        "senderName": {
+          "type": "string",
+          "description": "Short nickname of the player submitting the suggestion (no email/PII).",
+          "minLength": 1,
+          "maxLength": 40,
+          "pattern": "^[a-zA-Z0-9 _\\-.]+$"
+        },
+        "note": {
+          "type": "string",
+          "description": "Suggestion message body.",
+          "minLength": 2,
+          "maxLength": 500
+        },
+        "serverSource": {
+          "type": "string",
+          "description": "Server label from which the suggestion was submitted.",
+          "minLength": 1,
+          "maxLength": 32,
+          "enum": [
+            "AI Studio",
+            "Version 1",
+            "Version 2",
+            "Version 3",
+            "Version 4",
+            "Server 1",
+            "Server 2",
+            "Server 3",
+            "Server 4",
+            "Google Sites"
+          ]
+        },
+        "targetId": {
+          "type": "string",
+          "description": "Routing identifier targeting Jordan's AI Studio inbox.",
+          "minLength": 1,
+          "maxLength": 32,
+          "enum": [
+            "jords-ai-studio"
+          ]
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Immutable server timestamp when the suggestion was created."
+        }
+      },
+      "required": [
+        "senderName",
+        "note",
+        "serverSource",
+        "targetId",
+        "createdAt"
+      ]
+    },
+    "AdminRecord": {
+      "title": "AdminRecord",
+      "description": "System-only administrator marker keyed by Firebase Auth UID.",
+      "type": "object",
+      "properties": {
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Timestamp when admin record was provisioned."
+        }
+      },
+      "required": [
+        "createdAt"
+      ]
+    }
+  },
+  "firestore": {
+    "/userWorkspaces/{userId}": {
+      "schema": "UserWorkspace",
+      "description": "Per-user workspace preferences keyed by Firebase Auth UID."
+    },
+    "/suggestions/{suggestionId}": {
+      "schema": "SuggestionNote",
+      "description": "Suggestions submitted from JordS1.1 Settings and viewable by admin in AI Studio."
+    },
+    "/admins/{adminId}": {
+      "schema": "AdminRecord",
+      "description": "Console-managed administrator UID allowlist."
+    }
+  }
+}

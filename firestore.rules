@@ -1,0 +1,154 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Global default-deny safety net
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() >= 1 && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isVerifiedUser() {
+      return isSignedIn() && request.auth.token.email_verified == true;
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    function isAdmin() {
+      return isVerifiedUser() && (
+        request.auth.token.email == 'jojojohnson0425@gmail.com' ||
+        exists(/databases/$(database)/documents/admins/$(request.auth.uid))
+      );
+    }
+
+    function isValidStringList(arr, maxItems, maxItemLen, itemPattern) {
+      return arr is list &&
+        arr.size() <= maxItems &&
+        (arr.size() == 0 || (
+          arr[0] is string &&
+          arr[0].size() >= 1 &&
+          arr[0].size() <= maxItemLen &&
+          arr[0].matches(itemPattern)
+        ));
+    }
+
+    function isValidUserWorkspace(data) {
+      return data.keys().hasAll(['ownerId', 'favoriteIds', 'customColumns', 'createdAt', 'updatedAt']) &&
+        data.keys().hasOnly(['ownerId', 'favoriteIds', 'customColumns', 'createdAt', 'updatedAt']) &&
+        data.ownerId is string &&
+        data.ownerId.size() >= 1 &&
+        data.ownerId.size() <= 128 &&
+        data.ownerId.matches('^[a-zA-Z0-9_\\-]+$') &&
+        data.ownerId == request.auth.uid &&
+        isValidStringList(data.favoriteIds, 200, 120, '^[a-zA-Z0-9_\\-]+$') &&
+        isValidStringList(data.customColumns, 30, 32, '^[a-zA-Z0-9 _\\-]+$') &&
+        data.createdAt is timestamp &&
+        data.updatedAt is timestamp;
+    }
+
+    function isSyncWorkspaceAction() {
+      return incoming().diff(existing()).affectedKeys().hasOnly(['favoriteIds', 'customColumns', 'updatedAt']);
+    }
+
+    function isValidServerSource(src) {
+      return src is string &&
+        src.size() >= 1 &&
+        src.size() <= 32 &&
+        (
+          src == 'AI Studio' ||
+          src == 'Version 1' ||
+          src == 'Version 2' ||
+          src == 'Version 3' ||
+          src == 'Version 4' ||
+          src == 'Server 1' ||
+          src == 'Server 2' ||
+          src == 'Server 3' ||
+          src == 'Server 4' ||
+          src == 'Google Sites'
+        );
+    }
+
+    function isValidSuggestionNote(data) {
+      return data.keys().hasAll(['senderName', 'note', 'serverSource', 'targetId', 'createdAt']) &&
+        data.keys().hasOnly(['senderName', 'note', 'serverSource', 'targetId', 'createdAt']) &&
+        data.senderName is string &&
+        data.senderName.size() >= 1 &&
+        data.senderName.size() <= 40 &&
+        data.senderName.matches('^[a-zA-Z0-9 _\\-.]+$') &&
+        data.note is string &&
+        data.note.size() >= 2 &&
+        data.note.size() <= 500 &&
+        isValidServerSource(data.serverSource) &&
+        data.targetId is string &&
+        data.targetId.size() >= 1 &&
+        data.targetId.size() <= 32 &&
+        data.targetId == 'jords-ai-studio' &&
+        data.createdAt is timestamp;
+    }
+
+    match /admins/{adminId} {
+      allow read, write: if false;
+    }
+
+    match /userWorkspaces/{userId} {
+      allow get: if isSignedIn() && isValidId(userId) && isOwner(userId);
+      allow list: if false;
+
+      allow create: if (
+        isVerifiedUser() &&
+        isValidId(userId) &&
+        isValidUserWorkspace(incoming()) &&
+        isOwner(userId) &&
+        incoming().createdAt == request.time &&
+        incoming().updatedAt == request.time
+      );
+
+      allow update: if (
+        isSignedIn() &&
+        isValidUserWorkspace(incoming()) &&
+        isVerifiedUser() &&
+        isValidId(userId) &&
+        isOwner(userId) &&
+        incoming().ownerId == existing().ownerId &&
+        incoming().createdAt == existing().createdAt &&
+        incoming().updatedAt == request.time &&
+        (
+          isSyncWorkspaceAction()
+        )
+      );
+
+      allow delete: if isVerifiedUser() && isValidId(userId) && isOwner(userId);
+    }
+
+    match /suggestions/{suggestionId} {
+      allow get: if isAdmin() && isValidId(suggestionId);
+      allow list: if isAdmin() && existing().targetId == 'jords-ai-studio';
+
+      allow create: if (
+        isValidId(suggestionId) &&
+        isValidSuggestionNote(incoming()) &&
+        incoming().createdAt == request.time
+      );
+
+      allow update: if false;
+      allow delete: if isAdmin() && isValidId(suggestionId);
+    }
+  }
+}

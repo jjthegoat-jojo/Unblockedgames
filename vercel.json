@@ -1,0 +1,5 @@
+{
+  "installCommand": "true",
+  "buildCommand": "node scripts/prepare-static-dist.mjs dist_site",
+  "outputDirectory": "dist_site"
+}
