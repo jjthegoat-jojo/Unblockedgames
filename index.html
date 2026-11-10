@@ -1,1080 +1,520 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Jordans V1.1</title>
-    <meta
-      name="description"
-      content="Jordans V1.1 — 6,169+ official Playgama web games with instant launch and school utility tools."
-    />
-    <meta property="og:title" content="Jordans V1.1" />
-    <meta
-      property="og:description"
-      content="Jordans V1.1 — 6,169+ official Playgama web games with instant launch and school utility tools."
-    />
-    <meta property="og:type" content="website" />
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="apple-mobile-web-app-capable" content="yes" />
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-    <meta name="apple-mobile-web-app-title" content="Jordans V1.1" />
-    <link
-      id="dynamicFavicon"
-      rel="icon"
-      type="image/svg+xml"
-      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%23070709'/%3E%3Crect x='4' y='4' width='56' height='56' rx='13' fill='none' stroke='%23c0ff47' stroke-width='4'/%3E%3Ctext x='32' y='43' text-anchor='middle' fill='%23ffffff' font-family='system-ui,sans-serif' font-weight='800' font-size='30'%3EJ%3C/text%3E%3C/svg%3E"
-    />
-    <style>
-      html, body { background-color: #070709; color: #ffffff; margin: 0; padding: 0; min-height: 100vh; }
-    </style>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Outfit:wght@600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
-      rel="stylesheet"
-      media="print"
-      onload="this.media='all'"
-    />
-    <noscript>
-      <link
-        href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Outfit:wght@600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
-        rel="stylesheet"
-      />
-    </noscript>
-    <link rel="stylesheet" href="./style.css" />
-  </head>
-  <body>
-    <!-- 4-Digit Access Code Gate (0425 Required Before Entering Jordans V1.1) -->
-    <main id="authGate" class="auth-gate" aria-label="Access code required">
-      <div id="authCard" class="auth-card">
-        <h1 class="auth-brand">Jordans V1.1</h1>
-        <p id="authSubtitle" class="auth-subtitle">
-          Enter the 4-digit access code to open Jordans V1.1.
-        </p>
-
-        <form id="passcodeForm" class="passcode-form" autocomplete="off" novalidate>
-          <div class="pin-slots" role="group" aria-label="4-digit access code">
-            <input
-              type="text"
-              inputmode="numeric"
-              pattern="[0-9]*"
-              maxlength="1"
-              class="pin-slot active-slot"
-              data-pin-index="0"
-              aria-label="Digit 1"
-              autocomplete="off"
-            />
-            <input
-              type="text"
-              inputmode="numeric"
-              pattern="[0-9]*"
-              maxlength="1"
-              class="pin-slot"
-              data-pin-index="1"
-              aria-label="Digit 2"
-              autocomplete="off"
-            />
-            <input
-              type="text"
-              inputmode="numeric"
-              pattern="[0-9]*"
-              maxlength="1"
-              class="pin-slot"
-              data-pin-index="2"
-              aria-label="Digit 3"
-              autocomplete="off"
-            />
-            <input
-              type="text"
-              inputmode="numeric"
-              pattern="[0-9]*"
-              maxlength="1"
-              class="pin-slot"
-              data-pin-index="3"
-              aria-label="Digit 4"
-              autocomplete="off"
-            />
-          </div>
-
-          <p id="authStatusMsg" class="auth-status hidden" hidden role="alert"></p>
-
-          <div class="pin-keypad" aria-label="Numeric keypad">
-            <button type="button" class="pin-key" data-pin-key="1">1</button>
-            <button type="button" class="pin-key" data-pin-key="2">2</button>
-            <button type="button" class="pin-key" data-pin-key="3">3</button>
-            <button type="button" class="pin-key" data-pin-key="4">4</button>
-            <button type="button" class="pin-key" data-pin-key="5">5</button>
-            <button type="button" class="pin-key" data-pin-key="6">6</button>
-            <button type="button" class="pin-key" data-pin-key="7">7</button>
-            <button type="button" class="pin-key" data-pin-key="8">8</button>
-            <button type="button" class="pin-key" data-pin-key="9">9</button>
-            <button type="button" class="pin-key pin-key-action" data-pin-action="clear">Clear</button>
-            <button type="button" class="pin-key" data-pin-key="0">0</button>
-            <button type="button" class="pin-key pin-key-action" data-pin-action="back" aria-label="Delete last digit">⌫</button>
-          </div>
-
-          <button type="submit" id="unlockCodeBtn" class="btn-primary auth-unlock-btn">
-            Enter Jordans V1.1
-          </button>
-        </form>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Jordans V1.1</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body {
+      width: 100%; min-height: 100vh; background: #070709; color: #f8fafc;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      overflow-x: hidden; overflow-y: auto;
+    }
+    button, input { font: inherit; }
+    .hidden { display: none !important; }
+    #authGate {
+      min-height: 100vh; display: flex; align-items: center; justify-content: center;
+      padding: 20px; background: radial-gradient(circle at 50% 25%, #16182c 0%, #070709 70%);
+    }
+    .auth-card {
+      width: min(380px, 94vw); background: #10121a; border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 18px; padding: 26px 22px; text-align: center; box-shadow: 0 20px 50px rgba(0,0,0,0.65);
+    }
+    .auth-brand { font-size: 26px; font-weight: 800; color: #fff; }
+    .auth-sub { font-size: 13px; color: #94a3b8; margin: 6px 0 18px; }
+    .pin-slots { display: flex; justify-content: center; gap: 10px; margin-bottom: 14px; }
+    .pin-box {
+      width: 50px; height: 56px; border-radius: 12px; background: #070709;
+      border: 2px solid rgba(255,255,255,0.16); display: grid; place-items: center;
+      font-size: 24px; font-weight: 800; color: #c0ff47;
+    }
+    .pin-err { color: #f87171; font-size: 12px; margin-bottom: 10px; min-height: 16px; }
+    .keypad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 14px; }
+    .kbtn {
+      height: 46px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.1);
+      background: #171a26; color: #fff; font-weight: 700; font-size: 17px; cursor: pointer;
+    }
+    .kbtn:hover { background: #222638; border-color: #c0ff47; }
+    .btn-main {
+      width: 100%; padding: 12px 16px; border-radius: 10px; border: 0;
+      background: #c0ff47; color: #070709; font-weight: 800; font-size: 14px; cursor: pointer;
+    }
+    .hdr {
+      position: sticky; top: 0; z-index: 40; background: rgba(7, 7, 9, 0.94);
+      backdrop-filter: blur(10px); border-bottom: 1px solid rgba(255,255,255,0.08);
+      padding: 10px 18px; display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap;
+    }
+    .brand { font-size: 19px; font-weight: 800; color: #fff; background: none; border: 0; cursor: pointer; display: flex; align-items: center; gap: 8px; }
+    .brand-dot { width: 26px; height: 26px; border-radius: 7px; background: #c0ff47; color: #070709; display: grid; place-items: center; font-weight: 900; font-size: 15px; }
+    .nav { display: flex; gap: 6px; flex-wrap: wrap; }
+    .nbtn {
+      padding: 7px 12px; border-radius: 8px; border: 1px solid transparent;
+      background: transparent; color: #cbd5e1; font-weight: 600; font-size: 13px; cursor: pointer;
+    }
+    .nbtn.active, .nbtn:hover { background: rgba(192,255,71,0.14); color: #c0ff47; border-color: rgba(192,255,71,0.3); }
+    .hdr-right { display: flex; align-items: center; gap: 8px; }
+    .panic-btn {
+      padding: 7px 14px; border-radius: 8px; border: 0; background: #ef4444;
+      color: #fff; font-weight: 800; font-size: 13px; text-decoration: none; cursor: pointer;
+    }
+    .ghost-btn {
+      padding: 7px 12px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.14);
+      background: #131620; color: #e2e8f0; font-weight: 600; font-size: 13px; cursor: pointer;
+    }
+    .ghost-btn:hover { border-color: #c0ff47; color: #fff; }
+    .wrap { max-width: 1400px; margin: 0 auto; padding: 18px; }
+    .toolbar { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 14px; }
+    .search {
+      flex: 1; min-width: 220px; padding: 11px 14px; border-radius: 10px;
+      border: 1px solid rgba(255,255,255,0.14); background: #11131c; color: #fff; font-size: 14px;
+    }
+    .cats { display: flex; gap: 7px; overflow-x: auto; padding-bottom: 10px; margin-bottom: 16px; }
+    .cat-pill {
+      white-space: nowrap; padding: 6px 12px; border-radius: 8px;
+      border: 1px solid rgba(255,255,255,0.1); background: #11131c; color: #cbd5e1; font-size: 12px; font-weight: 600; cursor: pointer;
+    }
+    .cat-pill.active { background: #c0ff47; color: #070709; border-color: #c0ff47; font-weight: 800; }
+    .sec-title { font-size: 18px; font-weight: 800; margin: 14px 0 10px; display: flex; align-items: center; justify-content: space-between; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; }
+    .card {
+      background: #11131c; border: 1px solid rgba(255,255,255,0.09); border-radius: 12px;
+      overflow: hidden; cursor: pointer; text-align: left; transition: transform 0.14s ease, border-color 0.14s ease;
+      display: flex; flex-direction: column;
+    }
+    .card:hover { transform: translateY(-3px); border-color: #c0ff47; }
+    .thumb { width: 100%; aspect-ratio: 16/10; background: #141824; overflow: hidden; display: flex; align-items: center; justify-content: center; }
+    .thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .cbody { padding: 10px 12px; }
+    .ctitle { font-size: 14px; font-weight: 700; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .cmeta { font-size: 11px; color: #94a3b8; margin-top: 3px; }
+    .pbar { display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 10px; }
+    .stage {
+      position: relative; width: 100%; height: clamp(480px, 75vh, 740px);
+      background: #07090f; border-radius: 14px; overflow: hidden; border: 1px solid rgba(255,255,255,0.12);
+    }
+    .stage.pseudo-fs { position: fixed; inset: 0; width: 100vw; height: 100vh; z-index: 90; border-radius: 0; border: 0; }
+    .scard { background: #11131c; border: 1px solid rgba(255,255,255,0.1); border-radius: 14px; padding: 20px; margin-bottom: 16px; }
+    .pgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(145px, 1fr)); gap: 8px; margin: 12px 0; }
+    .pbtn { padding: 9px 12px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.12); background: #171a26; color: #e2e8f0; font-weight: 600; font-size: 13px; cursor: pointer; }
+    .pbtn.active { border-color: #c0ff47; background: rgba(192,255,71,0.15); color: #c0ff47; }
+    .finput { width: 100%; padding: 9px 12px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.15); background: #090b10; color: #fff; margin-top: 6px; }
+    #panicScreen { position: fixed; inset: 0; z-index: 999; background: #f8fafc; color: #0f172a; display: flex; flex-direction: column; }
+    .pdis-hdr { height: 56px; background: #15803d; color: #fff; display: flex; align-items: center; justify-content: space-between; padding: 0 20px; font-weight: 700; }
+    .pdis-grid { max-width: 960px; width: 100%; margin: 28px auto; padding: 0 20px; display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 14px; }
+    .pdis-tile { background: #fff; border: 1px solid #e2e8f0; border-radius: 10px; padding: 16px; }
+    .student-avatar {
+      width: 32px; height: 32px; border-radius: 50%; border: 0; background: #3b82f6;
+      color: #fff; font-weight: 700; font-size: 13px; display: grid; place-items: center; cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <main id="authGate">
+    <div class="auth-card">
+      <div class="auth-brand">Jordans V1.1</div>
+      <p class="auth-sub">Enter the 4-digit access code to unlock.</p>
+      <div class="pin-slots">
+        <div class="pin-box" id="ps0"></div>
+        <div class="pin-box" id="ps1"></div>
+        <div class="pin-box" id="ps2"></div>
+        <div class="pin-box" id="ps3"></div>
       </div>
-    </main>
+      <div class="pin-err" id="pinErr"></div>
+      <div class="keypad" id="pinKeypad">
+        <button type="button" class="kbtn" data-k="1">1</button>
+        <button type="button" class="kbtn" data-k="2">2</button>
+        <button type="button" class="kbtn" data-k="3">3</button>
+        <button type="button" class="kbtn" data-k="4">4</button>
+        <button type="button" class="kbtn" data-k="5">5</button>
+        <button type="button" class="kbtn" data-k="6">6</button>
+        <button type="button" class="kbtn" data-k="7">7</button>
+        <button type="button" class="kbtn" data-k="8">8</button>
+        <button type="button" class="kbtn" data-k="9">9</button>
+        <button type="button" class="kbtn" data-act="clear">Clear</button>
+        <button type="button" class="kbtn" data-k="0">0</button>
+        <button type="button" class="kbtn" data-act="back">⌫</button>
+      </div>
+      <button type="button" class="btn-main" id="unlockBtn">Enter Jordans V1.1</button>
+    </div>
+  </main>
 
-    <!-- Protected Portal Header: Brand | Portal Tabs + Refresh Tab | Panic + Settings Only -->
-    <header id="siteHeader" class="site-header hidden" hidden>
-      <div class="header-inner">
-        <button type="button" id="brandLink" class="brand-wordmark">Jordans V1.1</button>
-
-        <nav class="top-nav" aria-label="Primary Navigation">
-          <button type="button" class="nav-link active" data-nav-cat="Home">Home</button>
-          <button type="button" class="nav-link" data-nav-cat="Trending">Trending</button>
-          <button type="button" class="nav-link" data-nav-cat="Obby &amp; Parkour">Obby</button>
-          <button type="button" class="nav-link" data-nav-cat="Sports">Sports</button>
-          <button type="button" id="refreshNavBtn" class="nav-link" title="Refresh active game or portal shelves">Refresh</button>
-        </nav>
-
-        <div class="header-action">
-          <a
-            id="panicBtn"
-            href="https://classroom.google.com/"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="btn-panic"
-            aria-label="Panic — Open Google Classroom"
-          >Panic</a>
-          <button
-            type="button"
-            id="settingsTopBtn"
-            class="btn-ghost header-settings-btn"
-            aria-label="Open Settings"
-          >Settings</button>
-        </div>
+  <div id="portalApp" class="hidden">
+    <header class="hdr">
+      <button type="button" class="brand" id="homeLogoBtn">
+        <span class="brand-dot">J</span>
+        <span>Jordans V1.1</span>
+      </button>
+      <nav class="nav" id="topNav">
+        <button type="button" class="nbtn active" data-cat="Home">Home</button>
+        <button type="button" class="nbtn" data-cat="Simulation">Simulation</button>
+        <button type="button" class="nbtn" data-cat="Sports">Sports</button>
+        <button type="button" class="nbtn" data-cat="Racing">Racing</button>
+        <button type="button" class="nbtn" data-cat="Skill">Skill</button>
+        <button type="button" class="nbtn" data-cat="Action">Action</button>
+      </nav>
+      <div class="hdr-right">
+        <button type="button" class="panic-btn" id="panicTriggerBtn">Panic</button>
+        <button type="button" class="ghost-btn" id="openSettingsBtn">Settings</button>
       </div>
     </header>
 
-    <div id="appShell" class="app-shell hidden" hidden>
-      <!-- Left Portal Rail (Categories + School Tools + Custom Columns) -->
-      <aside id="sideOrganizer" class="side-organizer" aria-label="Categories and Columns">
-        <div class="rail-section">
-          <div id="railCategoryList" class="rail-nav-list" role="navigation" aria-label="Game Categories"></div>
+    <div class="wrap">
+      <section id="catalogView">
+        <div class="toolbar">
+          <input type="search" id="searchBox" class="search" placeholder="Search Spaceflight Simulator, Retro Bowl, Bee Swarm, Slope..." />
+          <button type="button" class="ghost-btn" id="randBtn">Random Game</button>
         </div>
-
-        <div class="rail-divider"></div>
-
-        <div class="rail-section">
-          <button type="button" id="railSchoolToolsBtn" class="rail-utility-btn">
-            <span class="rail-utility-label">School Tools</span>
-            <span id="railTimerReadout" class="unboxed-meta">Cloak · Calc</span>
-          </button>
+        <div class="cats" id="catBar"></div>
+        <div class="sec-title">
+          <span id="secHeading">Featured &amp; Unblocked Games</span>
+          <span id="countLbl" style="font-size:12px;color:#94a3b8;font-weight:600;"></span>
         </div>
+        <div id="emptyNotice" class="scard hidden" style="text-align:center;color:#cbd5e1;"></div>
+        <div class="grid" id="gamesGrid"></div>
+      </section>
 
-        <div class="rail-divider"></div>
-
-        <div class="organizer-header">
-          <div class="organizer-title-wrap">
-            <h2 class="organizer-title">Columns</h2>
-            <span id="organizerTotalCount" class="unboxed-meta">0 games</span>
+      <section id="playerView" class="hidden">
+        <div class="pbar">
+          <button type="button" class="ghost-btn" id="backBtn">← Back to Games</button>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;">
+            <button type="button" class="ghost-btn" id="cleanWinBtn">Clean Tab ↗</button>
+            <button type="button" class="ghost-btn" id="reloadBtn">Restart</button>
+            <button type="button" class="ghost-btn" id="fsBtn">Fullscreen</button>
           </div>
-          <button type="button" id="openAddColumnModalBtn" class="organizer-add-btn">+ Column</button>
         </div>
-
-        <div class="organizer-search-wrap">
-          <input
-            type="search"
-            id="organizerSearchInput"
-            class="organizer-search-input"
-            placeholder="Filter games..."
-            aria-label="Filter games in left rail"
-          />
+        <div class="stage" id="stageBox">
+          <div id="frameMount" style="width:100%;height:100%;position:relative;"></div>
         </div>
-
-        <div id="organizerTree" class="organizer-tree"></div>
-      </aside>
-
-      <!-- Main Portal Workspace -->
-      <main class="main-container">
-        <div id="mobileOrganizerBar" class="mobile-organizer-bar">
-          <button type="button" id="toggleOrganizerMobileBtn" class="btn-ghost">
-            <span>Categories &amp; Tools</span>
-          </button>
-          <button type="button" id="mobileRefreshBtn" class="btn-ghost">
-            <span>Refresh</span>
-          </button>
-          <button type="button" id="mobileSchoolToolsBtn" class="btn-ghost">
-            <span>School Tools</span>
-          </button>
+        <div style="margin-top:12px;">
+          <h2 id="pTitle" style="font-size:20px;font-weight:800;"></h2>
+          <p id="pMeta" style="font-size:12px;color:#94a3b8;margin-top:4px;"></p>
+          <p id="pDesc" style="font-size:13px;color:#cbd5e1;margin-top:6px;"></p>
         </div>
+      </section>
 
-        <!-- Active Game Player Stage (Loads as Jordans V1 with Per-Game Backup & Fullscreen) -->
-        <section id="playerSection" class="player-section hidden" hidden aria-label="Game Player">
-          <div class="player-toolbar">
-            <button type="button" id="backToCatalogBtn" class="btn-ghost">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-                <path d="M19 12H5M12 19l-7-7 7-7" stroke-linecap="round" stroke-linejoin="round" />
-              </svg>
-              <span>Back to Games</span>
-            </button>
-
-            <div class="player-actions">
-              <button
-                type="button"
-                id="reloadIframeBtn"
-                class="btn-ghost"
-                title="Refresh and reload this game stage"
-              >
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" aria-hidden="true">
-                  <path d="M21 12a9 9 0 1 1-2.64-6.36" stroke-linecap="round" />
-                  <path d="M21 3v6h-6" stroke-linecap="round" stroke-linejoin="round" />
-                </svg>
-                <span>Refresh</span>
-              </button>
-
-              <button type="button" id="playerFavBtn" class="btn-ghost" aria-pressed="false">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-                  <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" stroke-linejoin="round" />
-                </svg>
-                <span id="playerFavLabel">Save</span>
-              </button>
-
-              <label class="column-assign-wrap" for="assignColumnSelect">
-                <span class="sr-only">Move game to left column</span>
-                <select id="assignColumnSelect" class="column-select" title="Assign game to a column"></select>
-              </label>
-
-              <button
-                type="button"
-                id="popoutWindowBtn"
-                class="btn-ghost"
-                title="Launch game in clean unblockable window"
-              >
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-                  <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6M15 3h6v6M10 14L21 3" stroke-linecap="round" stroke-linejoin="round" />
-                </svg>
-                <span>Clean Tab</span>
-              </button>
-              <button type="button" id="theaterToggleBtn" class="btn-ghost">Wide View</button>
-              <button type="button" id="fullscreenBtn" class="btn-primary">Fullscreen</button>
-            </div>
+      <section id="settingsView" class="hidden">
+        <div class="pbar">
+          <button type="button" class="ghost-btn" id="closeSettingsBtn">← Back to Jordans V1.1</button>
+        </div>
+        <div class="scard">
+          <h2 style="font-size:18px;font-weight:800;">Panic Mode App &amp; Custom Keybind</h2>
+          <p style="font-size:13px;color:#94a3b8;margin-top:4px;">Pick your disguise app and custom keybind. Click the student profile in the disguise top-right or type 0425 to return.</p>
+          <div class="pgrid" id="panicPresets">
+            <button type="button" class="pbtn active" data-p="classroom">Google Classroom</button>
+            <button type="button" class="pbtn" data-p="clever">Clever Portal</button>
+            <button type="button" class="pbtn" data-p="docs">Google Docs</button>
+            <button type="button" class="pbtn" data-p="drive">Google Drive</button>
+            <button type="button" class="pbtn" data-p="canvas">Canvas</button>
+            <button type="button" class="pbtn" data-p="ixl">IXL</button>
+            <button type="button" class="pbtn" data-p="desmos">Desmos</button>
+            <button type="button" class="pbtn" data-p="custom">Custom App / URL</button>
           </div>
-
-          <div id="iframeStage" class="iframe-stage">
-            <!-- Custom Jordans V1 Branded Game Launch Screen -->
-            <div id="jordansLoader" class="jordans-loader hidden" hidden aria-live="polite">
-              <div class="jordans-loader-card">
-                <img id="loaderThumbImg" class="jordans-loader-thumb hidden" hidden alt="" referrerpolicy="no-referrer" />
-                <div class="jordans-loader-mark">Jordans V1.1</div>
-                <h2 id="loaderGameTitle" class="jordans-loader-title">Loading Game...</h2>
-                <p id="loaderStatusText" class="jordans-loader-sub">Launching official Playgama web game...</p>
-                <div class="jordans-loader-bar-track" aria-hidden="true">
-                  <div class="jordans-loader-bar-fill"></div>
-                </div>
-              </div>
-            </div>
-
-            <!-- Fullscreen Floating Controls -->
-            <div id="pseudoFsControls" class="pseudo-fs-controls hidden" hidden>
-              <button type="button" id="fsRefreshBtn" class="exit-fs-btn">Refresh</button>
-              <a
-                id="fsPanicBtn"
-                href="https://classroom.google.com/"
-                target="_blank"
-                rel="noopener noreferrer"
-                class="btn-panic btn-panic-sm"
-              >Panic</a>
-              <button type="button" id="exitPseudoFsBtn" class="exit-fs-btn">Exit Fullscreen</button>
-            </div>
-
-            <div id="iframeMount" class="iframe-mount"></div>
-          </div>
-
-          <div class="player-meta-bar">
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin-top:10px;">
             <div>
-              <h1 id="activeGameTitle" class="player-title">Game Title</h1>
-              <p id="activeGameMeta" class="unboxed-meta">Category · Controls · Unblocked</p>
+              <label style="font-size:12px;color:#cbd5e1;">Custom App Title</label>
+              <input id="customPanicTitle" class="finput" placeholder="Clever | Portal" />
             </div>
-            <p id="activeGameDesc" class="player-description"></p>
-          </div>
-
-          <div class="more-games-block">
-            <h2 class="section-heading">Recommended on Jordans V1.1</h2>
-            <div id="relatedGrid" class="games-grid compact-grid"></div>
-          </div>
-        </section>
-
-        <!-- Jordans V1.1 Portal Catalog View (Bento Hero + Shelves + Category Grid) -->
-        <section id="catalogSection" class="catalog-section">
-          <div class="workspace-toolbar">
-            <div class="search-input-wrap">
-              <svg class="search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-                <circle cx="11" cy="11" r="8" />
-                <path d="m21 21-4.3-4.3" stroke-linecap="round" />
-              </svg>
-              <input
-                type="search"
-                id="searchInput"
-                class="search-input"
-                placeholder="Search 6,169+ Playgama games (Moto X3M, Deadly Descent, Obby, Extreme Car, Basketball Stars...)"
-                aria-label="Search games"
-              />
-            </div>
-
-            <div class="toolbar-controls">
-              <button type="button" id="randomGameBtn" class="btn-ghost">
-                <span>Random Game</span>
-              </button>
-              <button type="button" id="shuffleHotBtn" class="btn-ghost">
-                <span>Shuffle Top</span>
-              </button>
-              <button type="button" id="openSchoolToolsToolbarBtn" class="btn-ghost">
-                <span>School Tools</span>
-              </button>
-            </div>
-          </div>
-
-          <div class="filter-bar-row">
-            <div class="filter-bar" id="categoryFilterBar" role="tablist" aria-label="Filter games by category"></div>
-          </div>
-
-          <div id="loadingState" class="empty-state hidden" hidden>Loading Jordans V1.1 catalog...</div>
-          <div id="errorState" class="empty-state hidden" hidden>Could not load games catalog. Click Refresh above to retry.</div>
-
-          <!-- Home Portal Showcase (Top Mosaic + Interactive Genre Strip + Horizontal Carousels) -->
-          <div id="portalHomeView" class="portal-home-view">
-            <div id="heroBentoGrid" class="hero-bento-grid" aria-label="Featured Games on Jordans V1.1"></div>
-            <div id="genreQuickJump" class="genre-quick-jump" aria-label="Browse All Genres"></div>
-            <div id="shelvesContainer" class="shelves-container"></div>
-          </div>
-
-          <!-- Category / Search Filtered Grid View -->
-          <div id="filteredGridWrap" class="filtered-grid-wrap hidden" hidden>
-            <div class="catalog-header">
-              <h1 id="catalogHeading" class="section-heading">All Games</h1>
-              <span id="gameCountLabel" class="unboxed-meta">0 games</span>
-            </div>
-
-            <div id="emptyState" class="empty-state hidden" hidden>
-              <p id="emptyStateMsg">No matching games found.</p>
-              <button type="button" id="clearFiltersBtn" class="btn-ghost">Back to Home</button>
-            </div>
-
-            <div id="gamesGrid" class="games-grid"></div>
-            <div id="loadMoreWrap" class="load-more-wrap hidden" hidden>
-              <button type="button" id="loadMoreGamesBtn" class="btn-primary">Show More Playgama Games</button>
-            </div>
-          </div>
-        </section>
-
-        <!-- Helpful School Tools Hub (Tab Cloak, Bell Countdown Timer, Calculator, Scratchpad) -->
-        <section id="schoolToolsSection" class="school-tools-section hidden" hidden aria-label="School Tools">
-          <div class="tools-header">
             <div>
-              <h1 class="section-heading">School Utility Hub</h1>
-              <p class="settings-panel-sub">
-                Tab disguise presets, panic keybind, class bell timer, math calculator, and local study notes.
-              </p>
-            </div>
-            <button type="button" id="closeSchoolToolsBtn" class="btn-ghost">Back to Games</button>
-          </div>
-
-          <div class="tools-grid">
-            <!-- Tool 1: Tab Cloak & Panic Shortcut -->
-            <div class="settings-card tool-card">
-              <h2 class="settings-panel-title">Tab Cloak &amp; Panic Key</h2>
-              <p id="schoolToolsPanicSub" class="settings-panel-sub">
-                Disguise browser tab title &amp; icon as a school app, or press your custom Panic keybind anytime to jump to your Panic app.
-              </p>
-
-              <div id="cloakButtonsGrid" class="cloak-buttons-grid">
-                <button type="button" class="cloak-btn active" data-cloak-id="default">Jordans V1.1</button>
-                <button type="button" class="cloak-btn" data-cloak-id="classroom">Google Classroom</button>
-                <button type="button" class="cloak-btn" data-cloak-id="docs">Google Docs</button>
-                <button type="button" class="cloak-btn" data-cloak-id="drive">Google Drive</button>
-                <button type="button" class="cloak-btn" data-cloak-id="clever">Clever Portal</button>
-                <button type="button" class="cloak-btn" data-cloak-id="desmos">Desmos Calc</button>
-              </div>
-
-              <label class="panic-hotkey-row" for="panicKeyToggle">
-                <input type="checkbox" id="panicKeyToggle" checked />
-                <span id="schoolToolsPanicLabel">Enable Quick Panic Key (Press <code>`</code> or double-tap <code>Esc</code> for Google Classroom)</span>
-              </label>
-
-              <div class="panic-tools-jump-row">
-                <button type="button" id="openPanicSettingsFromToolsBtn" class="inline-tab-link">
-                  Change Panic App (Clever, Google Docs, etc.) &amp; Custom Keybind in Settings →
-                </button>
-              </div>
-            </div>
-
-            <!-- Tool 2: Class Bell / Study Countdown Timer -->
-            <div class="settings-card tool-card">
-              <h2 class="settings-panel-title">Class Bell Countdown</h2>
-              <p class="settings-panel-sub">
-                Keep track of how many minutes remain in class or study hall.
-              </p>
-
-              <div id="bellTimerDisplay" class="bell-timer-display">25:00</div>
-
-              <div class="timer-presets-row">
-                <button type="button" class="btn-ghost timer-preset-btn" data-mins="5">5m</button>
-                <button type="button" class="btn-ghost timer-preset-btn" data-mins="15">15m</button>
-                <button type="button" class="btn-ghost timer-preset-btn" data-mins="25">25m</button>
-                <button type="button" class="btn-ghost timer-preset-btn" data-mins="45">45m</button>
-              </div>
-
-              <div class="timer-controls-row">
-                <button type="button" id="bellTimerStartBtn" class="btn-primary">Start Timer</button>
-                <button type="button" id="bellTimerResetBtn" class="btn-ghost">Reset</button>
-              </div>
-            </div>
-
-            <!-- Tool 3: Quick Math & Percent Calculator -->
-            <div class="settings-card tool-card">
-              <h2 class="settings-panel-title">Quick Math Calculator</h2>
-              <div id="calcDisplay" class="calc-display" aria-live="polite">0</div>
-              <div class="calc-keypad">
-                <button type="button" class="calc-key calc-op" data-calc="C">C</button>
-                <button type="button" class="calc-key calc-op" data-calc="BACK">⌫</button>
-                <button type="button" class="calc-key calc-op" data-calc="%">%</button>
-                <button type="button" class="calc-key calc-op" data-calc="/">÷</button>
-                <button type="button" class="calc-key" data-calc="7">7</button>
-                <button type="button" class="calc-key" data-calc="8">8</button>
-                <button type="button" class="calc-key" data-calc="9">9</button>
-                <button type="button" class="calc-key calc-op" data-calc="*">×</button>
-                <button type="button" class="calc-key" data-calc="4">4</button>
-                <button type="button" class="calc-key" data-calc="5">5</button>
-                <button type="button" class="calc-key" data-calc="6">6</button>
-                <button type="button" class="calc-key calc-op" data-calc="-">−</button>
-                <button type="button" class="calc-key" data-calc="1">1</button>
-                <button type="button" class="calc-key" data-calc="2">2</button>
-                <button type="button" class="calc-key" data-calc="3">3</button>
-                <button type="button" class="calc-key calc-op" data-calc="+">+</button>
-                <button type="button" class="calc-key calc-zero" data-calc="0">0</button>
-                <button type="button" class="calc-key" data-calc=".">.</button>
-                <button type="button" class="calc-key calc-eq" data-calc="=">=</button>
-              </div>
-            </div>
-
-            <!-- Tool 4: Auto-Saving Quick Study Scratchpad -->
-            <div class="settings-card tool-card">
-              <div class="field-label-row">
-                <h2 class="settings-panel-title">Quick Notes Scratchpad</h2>
-                <button type="button" id="clearScratchpadBtn" class="footer-link-btn">Clear</button>
-              </div>
-              <p class="settings-panel-sub">
-                Jot down homework reminders, locker combos, or game codes — saved locally on your device.
-              </p>
-              <textarea
-                id="schoolScratchpadInput"
-                class="settings-textarea scratchpad-area"
-                rows="6"
-                placeholder="Type quick class notes or reminders here..."
-              ></textarea>
+              <label style="font-size:12px;color:#cbd5e1;">Custom App URL</label>
+              <input id="customPanicUrl" class="finput" placeholder="https://clever.com/in/launchpad" />
             </div>
           </div>
-        </section>
-
-        <!-- Settings Page: Credits / About, Panic Mode & Keybind, Embed Code, Active Websites, Suggestions -->
-        <section id="settingsSection" class="settings-section hidden" hidden aria-label="Settings">
-          <div class="settings-shell">
-            <div class="settings-top-bar">
-              <button type="button" id="settingsBackBtn" class="btn-ghost">← Back to Jordans V1.1</button>
-              <div class="settings-top-actions">
-                <button type="button" id="copyIframeEmbedBtn" class="btn-ghost">Copy Google Sites Embed</button>
-                <button type="button" id="copySitesSettingsBtn" class="btn-primary">Copy Playgama Sites Bundle</button>
-              </div>
-            </div>
-
-            <!-- Panic Mode Destination App & Custom Keybind Block -->
-            <div id="panicSettingsCard" class="settings-card panic-settings-card">
-              <div class="settings-panel-header">
-                <div>
-                  <h2 class="settings-panel-title">Panic Mode &amp; Custom Keybind</h2>
-                  <p class="settings-panel-sub">
-                    Choose which school app or website your Panic button &amp; custom keybind switches to immediately.
-                  </p>
-                </div>
-                <a
-                  id="testPanicSettingsBtn"
-                  href="https://classroom.google.com/"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  class="btn-panic"
-                >Test Panic</a>
-              </div>
-
-              <div class="panic-config-block">
-                <div class="field-label-row">
-                  <span class="panic-sub-heading">1. Panic Destination App</span>
-                  <span id="panicActiveTargetReadout" class="unboxed-meta">Active: Google Classroom</span>
-                </div>
-
-                <div id="panicPresetsGrid" class="panic-presets-grid" role="group" aria-label="Panic App Presets">
-                  <button type="button" class="panic-preset-btn active" data-panic-preset="classroom">Google Classroom</button>
-                  <button type="button" class="panic-preset-btn" data-panic-preset="clever">Clever</button>
-                  <button type="button" class="panic-preset-btn" data-panic-preset="docs">Google Docs</button>
-                  <button type="button" class="panic-preset-btn" data-panic-preset="drive">Google Drive</button>
-                  <button type="button" class="panic-preset-btn" data-panic-preset="canvas">Canvas</button>
-                  <button type="button" class="panic-preset-btn" data-panic-preset="ixl">IXL</button>
-                  <button type="button" class="panic-preset-btn" data-panic-preset="desmos">Desmos</button>
-                  <button type="button" class="panic-preset-btn" data-panic-preset="custom">Custom App / URL</button>
-                </div>
-
-                <div id="panicCustomFieldsWrap" class="panic-custom-fields">
-                  <div class="field-group">
-                    <label for="panicCustomTitleInput">Custom App Name</label>
-                    <input
-                      type="text"
-                      id="panicCustomTitleInput"
-                      maxlength="60"
-                      placeholder="e.g. Clever Portal, Google Docs, PowerSchool..."
-                    />
-                  </div>
-                  <div class="field-group">
-                    <label for="panicCustomUrlInput">Custom Panic Website URL</label>
-                    <div class="panic-url-save-row">
-                      <input
-                        type="url"
-                        id="panicCustomUrlInput"
-                        placeholder="https://clever.com/in/launchpad or https://docs.google.com/document/u/0/"
-                      />
-                      <button type="button" id="saveCustomPanicBtn" class="btn-primary">Save App</button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div class="panic-divider"></div>
-
-              <div class="panic-config-block">
-                <div class="field-label-row">
-                  <span class="panic-sub-heading">2. Custom Panic Keybind</span>
-                  <span class="unboxed-meta">Works across portal &amp; games</span>
-                </div>
-
-                <div class="keybind-recorder-row">
-                  <div class="keybind-current-box">
-                    <span class="unboxed-meta">Current Keybind:</span>
-                    <kbd id="panicKeybindBadge" class="keybind-badge">`</kbd>
-                  </div>
-                  <div class="keybind-actions">
-                    <button type="button" id="recordPanicKeyBtn" class="btn-primary btn-record-key">
-                      Set Custom Keybind
-                    </button>
-                    <button type="button" id="resetPanicKeyBtn" class="btn-ghost">
-                      Reset (`)
-                    </button>
-                  </div>
-                </div>
-
-                <p id="panicKeybindHint" class="settings-panel-sub panic-keybind-hint">
-                  Click &ldquo;Set Custom Keybind&rdquo; and press any key or shortcut (like <code>]</code>, <code>\</code>, <code>F2</code>, <code>Shift + P</code>, or <code>Alt + C</code>).
-                </p>
-
-                <label class="panic-hotkey-row" for="settingsPanicKeyToggle">
-                  <input type="checkbox" id="settingsPanicKeyToggle" checked />
-                  <span id="settingsPanicToggleLabel">Enable Panic Keybind (Press <code>`</code> or double-tap <code>Esc</code>)</span>
-                </label>
-              </div>
-            </div>
-
-            <!-- Website Embed Code Card -->
-            <div class="settings-card embed-code-card">
-              <div class="settings-panel-header">
-                <div>
-                  <h2 class="settings-panel-title">Google Sites Full Page Embed Code (Playgama Edition)</h2>
-                  <p class="settings-panel-sub">
-                    Paste into Google Sites (&ldquo;Full page embed → Embed code&rdquo;) to launch real Playgama games directly with Panic Mode + Custom Keybind.
-                  </p>
-                </div>
-                <div class="embed-card-actions">
-                  <button type="button" id="copyFullPageEmbedCardBtn" class="btn-primary">Copy Google Sites Embed</button>
-                  <button type="button" id="copyStandaloneBundleCardBtn" class="btn-ghost">Copy Full Bundle</button>
-                  <button type="button" id="downloadStandaloneBundleBtn" class="btn-ghost">Download .html</button>
-                  <button type="button" id="copyEmbedCardBtn" class="btn-ghost">Direct Host Iframe</button>
-                </div>
-              </div>
-
-              <textarea
-                id="iframeEmbedCodeOutput"
-                class="settings-textarea embed-code-textarea"
-                rows="10"
-                readonly
-                aria-label="Jordans V1.1 Self-Contained Google Sites Full Page Embed Code"
-              ></textarea>
-            </div>
-
-            <!-- About / Credits Block -->
-            <div class="settings-card about-card">
-              <h1 class="settings-about-title">About</h1>
-              <p class="settings-about-text">
-                This website was created by Jordan J. If for any suggestions please click
-                <button type="button" id="inlineSuggestionsTrigger" class="inline-tab-link">"suggestions"</button>
-                tab under this message. Thank you.
-              </p>
-
-              <!-- Sub-Tabs Under About -->
-              <div class="settings-tabs" role="tablist" aria-label="Settings Sections">
-                <button
-                  type="button"
-                  id="tabBtnServers"
-                  class="settings-tab-btn active"
-                  role="tab"
-                  aria-selected="true"
-                  aria-controls="panelServers"
-                  data-settings-tab="servers"
-                >
-                  Active Websites
-                </button>
-                <button
-                  type="button"
-                  id="tabBtnSuggestions"
-                  class="settings-tab-btn"
-                  role="tab"
-                  aria-selected="false"
-                  aria-controls="panelSuggestions"
-                  data-settings-tab="suggestions"
-                >
-                  Suggestions
-                </button>
-              </div>
-            </div>
-
-            <!-- Tab Panel 1: Suggestions (Sends Note to This AI Studio) -->
-            <div id="panelSuggestions" class="settings-tab-panel hidden" hidden role="tabpanel" aria-labelledby="tabBtnSuggestions">
-              <div class="settings-card">
-                <div class="settings-panel-header">
-                  <div>
-                    <h2 class="settings-panel-title">Suggestions</h2>
-                    <p class="settings-panel-sub">
-                      Send a game request or feedback note directly to Jordan J.&rsquo;s AI Studio workspace.
-                    </p>
-                  </div>
-                </div>
-
-                <form id="suggestionForm" class="suggestion-form" novalidate>
-                  <div class="suggestion-row">
-                    <div class="field-group">
-                      <label for="suggestionSenderInput">Nickname (Optional)</label>
-                      <input
-                        type="text"
-                        id="suggestionSenderInput"
-                        maxlength="40"
-                        placeholder="e.g. Alex"
-                        autocomplete="off"
-                      />
-                    </div>
-
-                    <div class="field-group">
-                      <label for="suggestionServerSelect">Current Website / Server</label>
-                      <select id="suggestionServerSelect" class="settings-select">
-                        <option value="Version 1">Version 1 (jordsv1)</option>
-                        <option value="Version 2">Version 2 (jordsv2)</option>
-                        <option value="Version 3">Version 3 (jordsv3)</option>
-                        <option value="Version 4">Version 4 (jordsv4)</option>
-                        <option value="Server 1">Server 1 (jordanfs1)</option>
-                        <option value="Server 2">Second Server (jordanss2)</option>
-                        <option value="Server 3">Third Server (jordants3)</option>
-                        <option value="Server 4">Fourth Server (jordansfs)</option>
-                        <option value="AI Studio">Main AI Studio</option>
-                      </select>
-                    </div>
-                  </div>
-
-                  <div class="field-group">
-                    <div class="field-label-row">
-                      <label for="suggestionNoteInput">Suggestion Note</label>
-                      <span id="suggestionCharCount" class="unboxed-meta">0 / 500</span>
-                    </div>
-                    <textarea
-                      id="suggestionNoteInput"
-                      class="settings-textarea"
-                      rows="4"
-                      maxlength="500"
-                      required
-                      placeholder="Write your game suggestion or note for Jordan J..."
-                    ></textarea>
-                  </div>
-
-                  <div class="suggestion-actions">
-                    <p id="suggestionStatusMsg" class="suggestion-status hidden" hidden role="status"></p>
-                    <button type="submit" id="submitSuggestionBtn" class="btn-primary">
-                      Send Suggestion
-                    </button>
-                  </div>
-                </form>
-              </div>
-
-              <!-- Owner AI Studio Live Suggestions Inbox (Hidden in Google Sites Embed Mode) -->
-              <div id="studioInboxCard" class="settings-card studio-inbox-card hidden" hidden>
-                <div class="settings-panel-header">
-                  <div>
-                    <h2 class="settings-panel-title">AI Studio Suggestions Inbox</h2>
-                    <p class="settings-panel-sub">
-                      Live notes sent from all Jordans V1.1 active websites to Jordan J.
-                    </p>
-                  </div>
-                  <span id="inboxCountLabel" class="unboxed-meta">0 notes</span>
-                </div>
-
-                <div id="studioInboxAuthPrompt" class="inbox-auth-prompt">
-                  <p class="settings-panel-sub">
-                    Sign in with Jordan J.&rsquo;s Google account to read incoming suggestion notes here in AI Studio.
-                  </p>
-                  <button type="button" id="inboxSignInBtn" class="btn-ghost">Sign in with Google</button>
-                </div>
-
-                <div id="studioInboxList" class="studio-inbox-list hidden" hidden></div>
-              </div>
-            </div>
-
-            <!-- Tab Panel 2: Active Websites / Servers Active -->
-            <div id="panelServers" class="settings-tab-panel" role="tabpanel" aria-labelledby="tabBtnServers">
-              <div class="settings-card">
-                <div class="settings-panel-header">
-                  <div>
-                    <h2 class="settings-panel-title">Active Websites &amp; Mirrors</h2>
-                    <p class="settings-panel-sub">
-                      Switch to any official Jordans V1.1 link below if a school network blocks one mirror.
-                    </p>
-                  </div>
-                  <span class="servers-summary-status">All 8 Available</span>
-                </div>
-
-                <div class="servers-list">
-                  <div class="server-row">
-                    <div class="server-info">
-                      <div class="server-title-line">
-                        <span class="server-name">Version 1</span>
-                        <span class="server-avail">Available · Official V1.1</span>
-                      </div>
-                      <a
-                        href="https://sites.google.com/view/jordsv1/jords1-1"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        class="server-url"
-                      >https://sites.google.com/view/jordsv1/jords1-1</a>
-                    </div>
-                    <div class="server-actions">
-                      <button
-                        type="button"
-                        class="btn-ghost server-copy-btn"
-                        data-copy-url="https://sites.google.com/view/jordsv1/jords1-1"
-                      >Copy Link</button>
-                      <a
-                        href="https://sites.google.com/view/jordsv1/jords1-1"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        class="btn-primary server-open-link"
-                      >Open Version 1</a>
-                    </div>
-                  </div>
-
-                  <div class="server-row">
-                    <div class="server-info">
-                      <div class="server-title-line">
-                        <span class="server-name">Version 2</span>
-                        <span class="server-avail">Available · Official V1.1</span>
-                      </div>
-                      <a
-                        href="https://sites.google.com/view/jordsv2/jords2-2"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        class="server-url"
-                      >https://sites.google.com/view/jordsv2/jords2-2</a>
-                    </div>
-                    <div class="server-actions">
-                      <button
-                        type="button"
-                        class="btn-ghost server-copy-btn"
-                        data-copy-url="https://sites.google.com/view/jordsv2/jords2-2"
-                      >Copy Link</button>
-                      <a
-                        href="https://sites.google.com/view/jordsv2/jords2-2"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        class="btn-primary server-open-link"
-                      >Open Version 2</a>
-                    </div>
-                  </div>
-
-                  <div class="server-row">
-                    <div class="server-info">
-                      <div class="server-title-line">
-                        <span class="server-name">Version 3</span>
-                        <span class="server-avail">Available · Official V1.1</span>
-                      </div>
-                      <a
-                        href="https://sites.google.com/view/jordsv3/jords3-3"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        class="server-url"
-                      >https://sites.google.com/view/jordsv3/jords3-3</a>
-                    </div>
-                    <div class="server-actions">
-                      <button
-                        type="button"
-                        class="btn-ghost server-copy-btn"
-                        data-copy-url="https://sites.google.com/view/jordsv3/jords3-3"
-                      >Copy Link</button>
-                      <a
-                        href="https://sites.google.com/view/jordsv3/jords3-3"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        class="btn-primary server-open-link"
-                      >Open Version 3</a>
-                    </div>
-                  </div>
-
-                  <div class="server-row">
-                    <div class="server-info">
-                      <div class="server-title-line">
-                        <span class="server-name">Version 4</span>
-                        <span class="server-avail">Available · Official V1.1</span>
-                      </div>
-                      <a
-                        href="https://sites.google.com/view/jordsv4/jords4-4"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        class="server-url"
-                      >https://sites.google.com/view/jordsv4/jords4-4</a>
-                    </div>
-                    <div class="server-actions">
-                      <button
-                        type="button"
-                        class="btn-ghost server-copy-btn"
-                        data-copy-url="https://sites.google.com/view/jordsv4/jords4-4"
-                      >Copy Link</button>
-                      <a
-                        href="https://sites.google.com/view/jordsv4/jords4-4"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        class="btn-primary server-open-link"
-                      >Open Version 4</a>
-                    </div>
-                  </div>
-
-                  <div class="server-row">
-                    <div class="server-info">
-                      <div class="server-title-line">
-                        <span class="server-name">Server 1</span>
-                        <span class="server-avail">Available · Backup Mirror</span>
-                      </div>
-                      <a
-                        href="https://sites.google.com/view/jordanfs1/home/jords1-1"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        class="server-url"
-                      >https://sites.google.com/view/jordanfs1/home/jords1-1</a>
-                    </div>
-                    <div class="server-actions">
-                      <button
-                        type="button"
-                        class="btn-ghost server-copy-btn"
-                        data-copy-url="https://sites.google.com/view/jordanfs1/home/jords1-1"
-                      >Copy Link</button>
-                      <a
-                        href="https://sites.google.com/view/jordanfs1/home/jords1-1"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        class="btn-primary server-open-link"
-                      >Open Server 1</a>
-                    </div>
-                  </div>
-
-                  <div class="server-row">
-                    <div class="server-info">
-                      <div class="server-title-line">
-                        <span class="server-name">Second Server</span>
-                        <span class="server-avail">Available · Backup Mirror</span>
-                      </div>
-                      <a
-                        href="https://sites.google.com/view/jordanss2/jords2-2"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        class="server-url"
-                      >https://sites.google.com/view/jordanss2/jords2-2</a>
-                    </div>
-                    <div class="server-actions">
-                      <button
-                        type="button"
-                        class="btn-ghost server-copy-btn"
-                        data-copy-url="https://sites.google.com/view/jordanss2/jords2-2"
-                      >Copy Link</button>
-                      <a
-                        href="https://sites.google.com/view/jordanss2/jords2-2"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        class="btn-primary server-open-link"
-                      >Open Server 2</a>
-                    </div>
-                  </div>
-
-                  <div class="server-row">
-                    <div class="server-info">
-                      <div class="server-title-line">
-                        <span class="server-name">Third Server</span>
-                        <span class="server-avail">Available · Backup Mirror</span>
-                      </div>
-                      <a
-                        href="https://sites.google.com/view/jordants3/jords3-3"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        class="server-url"
-                      >https://sites.google.com/view/jordants3/jords3-3</a>
-                    </div>
-                    <div class="server-actions">
-                      <button
-                        type="button"
-                        class="btn-ghost server-copy-btn"
-                        data-copy-url="https://sites.google.com/view/jordants3/jords3-3"
-                      >Copy Link</button>
-                      <a
-                        href="https://sites.google.com/view/jordants3/jords3-3"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        class="btn-primary server-open-link"
-                      >Open Server 3</a>
-                    </div>
-                  </div>
-
-                  <div class="server-row">
-                    <div class="server-info">
-                      <div class="server-title-line">
-                        <span class="server-name">Fourth Server</span>
-                        <span class="server-avail">Available · Backup Mirror</span>
-                      </div>
-                      <a
-                        href="https://sites.google.com/view/jordansfs/jords4-4"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        class="server-url"
-                      >https://sites.google.com/view/jordansfs/jords4-4</a>
-                    </div>
-                    <div class="server-actions">
-                      <button
-                        type="button"
-                        class="btn-ghost server-copy-btn"
-                        data-copy-url="https://sites.google.com/view/jordansfs/jords4-4"
-                      >Copy Link</button>
-                      <a
-                        href="https://sites.google.com/view/jordansfs/jords4-4"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        class="btn-primary server-open-link"
-                      >Open Server 4</a>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
+          <div style="margin-top:14px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+            <button type="button" class="btn-main" id="savePanicBtn" style="width:auto;">Save Panic App</button>
+            <button type="button" class="ghost-btn" id="recordKeyBtn">Keybind: ` (Click to Change)</button>
           </div>
-        </section>
-      </main>
+        </div>
+      </section>
     </div>
+  </div>
 
-    <footer id="siteFooter" class="site-footer hidden" hidden>
-      <div class="footer-inner">
-        <span>Jordans V1.1 · Created by Jordan J.</span>
-        <div class="footer-right">
-          <span id="signedInEmailLabel" class="unboxed-meta">6,169 Playgama Games · Official Real Web Games</span>
-          <button type="button" id="footerSchoolToolsBtn" class="footer-link-btn">Tab Cloak</button>
-          <button type="button" id="lockSiteBtn" class="footer-link-btn">Lock (0425)</button>
-        </div>
-      </div>
-    </footer>
-
-    <!-- Add / Organize Left Column Modal -->
-    <div id="addColumnModal" class="modal-backdrop hidden" hidden role="dialog" aria-modal="true" aria-labelledby="colModalTitle">
-      <div class="modal-panel">
-        <div class="modal-header">
-          <h2 id="colModalTitle" class="modal-title">Create New Column</h2>
-          <button type="button" id="closeColModalBtn" class="btn-icon" aria-label="Close modal">✕</button>
-        </div>
-
-        <form id="addColumnForm" class="modal-body">
-          <div class="field-group">
-            <label for="columnNameInput">Column Title</label>
-            <input type="text" id="columnNameInput" required maxlength="32" placeholder="e.g. Lunch Favorites, 2-Player, Sports..." />
-          </div>
-
-          <div class="field-group">
-            <label for="columnGameFilterInput">Pick Games to Include</label>
-            <input type="search" id="columnGameFilterInput" placeholder="Filter games to add to this column..." />
-            <div id="columnGameChecklist" class="column-checklist"></div>
-          </div>
-
-          <div class="modal-actions">
-            <button type="button" id="cancelColModalBtn" class="btn-ghost">Cancel</button>
-            <button type="submit" class="btn-primary">Create Column</button>
-          </div>
-        </form>
+  <section id="panicScreen" class="hidden">
+    <div class="pdis-hdr" id="panicHdr">
+      <span id="panicHdrTitle">Classes · Google Classroom</span>
+      <div style="display:flex;gap:10px;align-items:center;">
+        <a id="panicRealOpen" href="https://classroom.google.com/" target="_blank" rel="noopener noreferrer" style="color:#fff;font-size:13px;text-decoration:none;">Open Full App ↗</a>
+        <button type="button" id="exitPanicBtn" class="student-avatar" aria-label="Student Profile" title="Student Profile">S</button>
       </div>
     </div>
+    <div class="pdis-grid">
+      <div class="pdis-tile"><h3>Daily Assignments</h3><p style="font-size:12px;color:#64748b;margin-top:4px;">Unit 4 Reading &amp; Lab Worksheet</p></div>
+      <div class="pdis-tile"><h3>Google Docs</h3><p style="font-size:12px;color:#64748b;margin-top:4px;">Essay Draft — Edited today</p></div>
+      <div class="pdis-tile"><h3>Desmos Calculator</h3><p style="font-size:12px;color:#64748b;margin-top:4px;">Graphing &amp; Scientific Workspace</p></div>
+      <div class="pdis-tile"><h3>Clever Launchpad</h3><p style="font-size:12px;color:#64748b;margin-top:4px;">District Student Resources</p></div>
+    </div>
+  </section>
 
-    <!-- Instant Panic Disguise Screen (Guarantees Panic Mode Works Inside Embedded Frames & Keybinds) -->
-    <section id="panicDisguiseScreen" class="panic-disguise hidden" hidden aria-label="School Workspace">
-      <header id="panicDisguiseHeader" class="panic-disguise-header">
-        <div class="panic-disguise-brand">
-          <span id="panicDisguiseBadge" class="panic-disguise-badge">C</span>
-          <div>
-            <div id="panicDisguiseAppName" class="panic-disguise-title">Classes</div>
-            <div id="panicDisguiseSub" class="panic-disguise-sub">classroom.google.com</div>
-          </div>
-        </div>
-        <div class="panic-disguise-actions">
-          <a
-            id="panicDisguiseOpenLink"
-            href="https://classroom.google.com/"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="panic-disguise-open-btn"
-          >Open Full App ↗</a>
-          <button
-            type="button"
-            id="exitPanicDisguiseBtn"
-            class="panic-disguise-return-btn"
-            title="Student Account"
-            aria-label="Student Account"
-          ><span class="panic-disguise-avatar">S</span></button>
-        </div>
-      </header>
-      <div id="panicDisguiseBody" class="panic-disguise-body"></div>
-    </section>
+  <script>
+  (function () {
+    var ORIGIN = "https://ais-pre-n2xfecuxxm2xybnfyl23hz-903443430664.us-east1.run.app";
+    var GAMES = [
+      { id: "spaceflight-simulator", title: "Spaceflight Simulator", category: "Simulation", url: ORIGIN + "/games/spaceflightsimulator/index.html", description: "Real Unity WebGL rocket builder and space exploration flight simulator.", thumbnail: ORIGIN + "/games/spaceflightsimulator/thumb.png" },
+      { id: "bee-swarm-simulator", title: "Bee Swarm Simulator", category: "Simulation", url: ORIGIN + "/games/beeswarmsimulator/index.html", description: "Grow your bee swarm, collect pollen, make honey, and fight mobs.", thumbnail: ORIGIN + "/games/beeswarmsimulator/thumb.png" },
+      { id: "retro-bowl", title: "Retro Bowl", category: "Sports", url: ORIGIN + "/games/retrobowl/index.html", description: "The smash-hit retro-style American football arcade game.", thumbnail: "https://static.playgama.com/p-img/pg/moto-x3m/big_preview/6863e1c77f624087bae1d217cdf4c240?width=448" },
+      { id: "slope", title: "Slope", category: "Skill", url: ORIGIN + "/games/slope/index.html", description: "Speed down endless 3D neon courses with zero ads.", thumbnail: "https://static.playgama.com/p-img/pg/bottle-jump-3d/big_preview/845373a9035146028a44366f2e2bbdae?width=448" },
+      { id: "drive-mad", title: "Drive Mad", category: "Racing", url: ORIGIN + "/games/drivemad/index.html", description: "Physics-based 4x4 monster truck stunt game.", thumbnail: "https://static.playgama.com/p-img/pg/deadly-descent/big-preview/cd3969f230d54e6abe01716483d55c8a?width=448" },
+      { id: "moto-x3m", title: "Moto X3M", category: "Racing", url: ORIGIN + "/games/motox3m/index.html", description: "Master off-road circuits and perform motorcycle flips.", thumbnail: "https://static.playgama.com/p-img/pg/moto-x3m/big_preview/6863e1c77f624087bae1d217cdf4c240?width=448" },
+      { id: "basket-random", title: "Basket Random", category: "Sports", url: ORIGIN + "/games/basketrandom/index.html", description: "Funny 2-player ragdoll basketball game.", thumbnail: "https://static.playgama.com/p-img/pg/soccer-random/big-preview/6f59ef235c1e42198225c02473d66943?width=448" }
+    ];
 
-    <div id="toastBanner" class="toast hidden" hidden role="status" aria-live="polite"></div>
+    var PIN = "0425", unlocked = false, pinBuf = "", panicBuf = "", activeCat = "Home", query = "", curGame = null;
+    var panicPreset = "classroom", customTitle = "Clever | Portal", customUrl = "https://clever.com/in/launchpad", panicKey = "`", recordingKey = false;
+    var PRESETS = {
+      classroom: { label: "Google Classroom", url: "https://classroom.google.com/", color: "#15803d" },
+      clever: { label: "Clever | Portal", url: "https://clever.com/in/launchpad", color: "#2563eb" },
+      docs: { label: "Untitled document - Google Docs", url: "https://docs.google.com/document/u/0/", color: "#1d4ed8" },
+      drive: { label: "My Drive - Google Drive", url: "https://drive.google.com/drive/my-drive", color: "#0f766e" },
+      canvas: { label: "Dashboard | Canvas", url: "https://canvas.instructure.com/", color: "#dc2626" },
+      ixl: { label: "IXL | Dashboard", url: "https://www.ixl.com/", color: "#059669" },
+      desmos: { label: "Desmos | Scientific Calculator", url: "https://www.desmos.com/scientific", color: "#166534" }
+    };
 
-    <script type="module" src="./script.js"></script>
-    <script>
-      (function () {
-        setTimeout(function () {
-          if (window.__JORDS_BOOTED__) return;
-          var gate = document.getElementById('authGate');
-          var hdr = document.getElementById('siteHeader');
-          var sh = document.getElementById('appShell');
-          var ftr = document.getElementById('siteFooter');
-          var slots = document.querySelectorAll('.pin-slot');
-          var buf = '';
-          function unlockFallback() {
-            if (gate) { gate.classList.add('hidden'); gate.hidden = true; }
-            if (hdr) { hdr.classList.remove('hidden'); hdr.hidden = false; }
-            if (sh) { sh.classList.remove('hidden'); sh.hidden = false; }
-            if (ftr) { ftr.classList.remove('hidden'); ftr.hidden = false; }
-          }
-          function pushD(d) {
-            if (buf.length >= 4) buf = '';
-            buf += d;
-            for (var i = 0; i < slots.length; i++) slots[i].value = buf[i] || '';
-            if (buf === '0425') unlockFallback();
-            else if (buf.length === 4) setTimeout(function () { buf = ''; for (var i = 0; i < slots.length; i++) slots[i].value = ''; }, 300);
-          }
-          document.querySelectorAll('[data-pin-key]').forEach(function (b) {
-            b.addEventListener('click', function () { pushD(b.getAttribute('data-pin-key') || ''); });
-          });
-          document.addEventListener('keydown', function (e) {
-            if (/^[0-9]$/.test(e.key)) pushD(e.key);
-          });
-        }, 2500);
-      })();
-    </script>
-  </body>
+    function getTarget() {
+      if (panicPreset === "custom") {
+        var u = (customUrl || "https://clever.com/in/launchpad").trim();
+        if (!/^https?:\/\//i.test(u)) u = "https://" + u;
+        return { label: customTitle || "Clever | Portal", url: u, color: "#2563eb" };
+      }
+      return PRESETS[panicPreset] || PRESETS.classroom;
+    }
+
+    function syncPanicUI() {
+      var t = getTarget();
+      document.getElementById("panicRealOpen").href = t.url;
+      document.getElementById("panicHdrTitle").textContent = t.label;
+      document.getElementById("panicHdr").style.background = t.color;
+    }
+    syncPanicUI();
+
+    function triggerPanic() {
+      var t = getTarget();
+      cleanStage();
+      document.title = t.label;
+      document.getElementById("panicScreen").classList.remove("hidden");
+    }
+
+    function exitPanic() {
+      document.getElementById("panicScreen").classList.add("hidden");
+      document.title = "Jordans V1.1";
+      panicBuf = "";
+    }
+
+    document.getElementById("panicTriggerBtn").addEventListener("click", triggerPanic);
+    document.getElementById("exitPanicBtn").addEventListener("click", exitPanic);
+
+    function syncPin() {
+      for (var i = 0; i < 4; i++) {
+        var el = document.getElementById("ps" + i);
+        if (el) el.textContent = pinBuf[i] ? "●" : "";
+      }
+    }
+
+    function pushDigit(d) {
+      if (unlocked || pinBuf.length >= 4) return;
+      document.getElementById("pinErr").textContent = "";
+      pinBuf += d;
+      syncPin();
+      if (pinBuf.length === 4) {
+        if (pinBuf === PIN) {
+          unlocked = true; pinBuf = "";
+          document.getElementById("authGate").classList.add("hidden");
+          document.getElementById("portalApp").classList.remove("hidden");
+          renderCats(); renderGrid();
+        } else {
+          document.getElementById("pinErr").textContent = "Incorrect code. Try again.";
+          setTimeout(function () { pinBuf = ""; syncPin(); }, 360);
+        }
+      }
+    }
+
+    document.getElementById("pinKeypad").addEventListener("click", function (e) {
+      var b = e.target.closest("button");
+      if (!b) return;
+      var k = b.getAttribute("data-k"), act = b.getAttribute("data-act");
+      if (k !== null) pushDigit(k);
+      else if (act === "clear") { pinBuf = ""; syncPin(); }
+      else if (act === "back") { pinBuf = pinBuf.slice(0, -1); syncPin(); }
+    });
+    document.getElementById("unlockBtn").addEventListener("click", function () {
+      if (pinBuf === PIN) {
+        unlocked = true;
+        document.getElementById("authGate").classList.add("hidden");
+        document.getElementById("portalApp").classList.remove("hidden");
+        renderCats(); renderGrid();
+      } else {
+        document.getElementById("pinErr").textContent = "Enter 4-digit access code (0425).";
+      }
+    });
+
+    var cats = ["Home", "Simulation", "Sports", "Racing", "Skill"];
+    function renderCats() {
+      var bar = document.getElementById("catBar");
+      bar.innerHTML = "";
+      cats.forEach(function (c) {
+        var b = document.createElement("button");
+        b.type = "button";
+        b.className = "cat-pill" + (activeCat === c && !query ? " active" : "");
+        b.textContent = c;
+        b.addEventListener("click", function () {
+          activeCat = c; query = ""; document.getElementById("searchBox").value = "";
+          showView("catalog"); renderCats(); renderGrid();
+        });
+        bar.appendChild(b);
+      });
+      document.querySelectorAll("#topNav .nbtn").forEach(function (nb) {
+        nb.classList.toggle("active", nb.getAttribute("data-cat") === activeCat && !query);
+      });
+    }
+
+    function renderGrid() {
+      var q = query.trim().toLowerCase();
+      var emptyNotice = document.getElementById("emptyNotice");
+      if (q && q.indexOf("subway") !== -1) {
+        document.getElementById("gamesGrid").innerHTML = "";
+        emptyNotice.textContent = "Subway Surfers — Game Deleted (Rip-off build removed).";
+        emptyNotice.classList.remove("hidden");
+        document.getElementById("countLbl").textContent = "0 games";
+        return;
+      }
+      var list = GAMES.filter(function (g) {
+        if (q) return (g.title + " " + g.category + " " + g.description).toLowerCase().indexOf(q) !== -1;
+        if (activeCat === "Home") return true;
+        return g.category === activeCat;
+      });
+      document.getElementById("secHeading").textContent = q ? 'Search: "' + query.trim() + '"' : activeCat === "Home" ? "Featured & Unblocked Games" : activeCat;
+      document.getElementById("countLbl").textContent = list.length + " games";
+      emptyNotice.classList.toggle("hidden", list.length > 0);
+      var grid = document.getElementById("gamesGrid");
+      grid.innerHTML = "";
+      list.forEach(function (g) {
+        var card = document.createElement("button");
+        card.type = "button"; card.className = "card";
+        var th = document.createElement("div"); th.className = "thumb";
+        var img = document.createElement("img"); img.src = g.thumbnail; img.alt = g.title; img.referrerPolicy = "no-referrer";
+        th.appendChild(img);
+        var cb = document.createElement("div"); cb.className = "cbody";
+        var ct = document.createElement("div"); ct.className = "ctitle"; ct.textContent = g.title;
+        var cm = document.createElement("div"); cm.className = "cmeta"; cm.textContent = g.category + " · Instant Play";
+        cb.appendChild(ct); cb.appendChild(cm);
+        card.appendChild(th); card.appendChild(cb);
+        card.addEventListener("click", function () { openGame(g); });
+        grid.appendChild(card);
+      });
+    }
+
+    function cleanStage() {
+      document.getElementById("frameMount").innerHTML = "";
+    }
+
+    function mountDirectStage(g) {
+      cleanStage();
+      document.getElementById("pTitle").textContent = g.title;
+      document.getElementById("pMeta").textContent = g.category + " · Real Unblocked Game";
+      document.getElementById("pDesc").textContent = g.description || "";
+      var ifr = document.createElement("iframe");
+      var targetUrl = g.url || (ORIGIN + "/api/proxy/game/" + encodeURIComponent(g.id));
+      ifr.src = targetUrl;
+      ifr.title = g.title;
+      ifr.style.cssText = "width:100%;height:100%;border:0;display:block;background:#07090f;";
+      ifr.setAttribute("referrerpolicy", "no-referrer");
+      ifr.setAttribute("allow", "fullscreen; autoplay; accelerometer; gyroscope; gamepad; pointer-lock");
+      ifr.setAttribute("allowfullscreen", "true");
+      document.getElementById("frameMount").appendChild(ifr);
+    }
+
+    function showView(v) {
+      if (v !== "player") cleanStage();
+      document.getElementById("catalogView").classList.toggle("hidden", v !== "catalog");
+      document.getElementById("playerView").classList.toggle("hidden", v !== "player");
+      document.getElementById("settingsView").classList.toggle("hidden", v !== "settings");
+    }
+
+    function openGame(g) {
+      curGame = g;
+      showView("player");
+      mountDirectStage(g);
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    document.getElementById("searchBox").addEventListener("input", function (e) {
+      query = e.target.value || ""; showView("catalog"); renderGrid();
+    });
+    document.getElementById("randBtn").addEventListener("click", function () {
+      if (GAMES.length) openGame(GAMES[Math.floor(Math.random() * GAMES.length)]);
+    });
+    document.querySelectorAll("#topNav .nbtn").forEach(function (b) {
+      b.addEventListener("click", function () {
+        activeCat = b.getAttribute("data-cat") || "Home";
+        query = ""; document.getElementById("searchBox").value = "";
+        showView("catalog"); renderCats(); renderGrid();
+      });
+    });
+    document.getElementById("homeLogoBtn").addEventListener("click", function () {
+      activeCat = "Home"; query = ""; document.getElementById("searchBox").value = "";
+      showView("catalog"); renderCats(); renderGrid();
+    });
+    document.getElementById("backBtn").addEventListener("click", function () { showView("catalog"); });
+    document.getElementById("reloadBtn").addEventListener("click", function () { if (curGame) mountDirectStage(curGame); });
+    document.getElementById("fsBtn").addEventListener("click", function () {
+      document.getElementById("stageBox").classList.toggle("pseudo-fs");
+    });
+    document.getElementById("cleanWinBtn").addEventListener("click", function () {
+      if (!curGame) return;
+      var u = curGame.url || (ORIGIN + "/api/proxy/game/" + encodeURIComponent(curGame.id));
+      try {
+        var w = window.open("about:blank", "_blank");
+        if (w) {
+          w.document.write('<!DOCTYPE html><html><head><meta charset="utf-8"><title>' + curGame.title + '</title><style>html,body,iframe{margin:0;padding:0;width:100%;height:100%;border:none;overflow:hidden;background:#000;}</style></head><body><iframe src="' + u + '" allow="fullscreen; autoplay; accelerometer; gyroscope; gamepad; pointer-lock" referrerpolicy="no-referrer" allowfullscreen></iframe></body></html>');
+          w.document.close();
+        } else {
+          window.open(u, "_blank", "noopener,noreferrer");
+        }
+      } catch (err) {
+        window.open(u, "_blank", "noopener,noreferrer");
+      }
+    });
+
+    document.getElementById("openSettingsBtn").addEventListener("click", function () { showView("settings"); });
+    document.getElementById("closeSettingsBtn").addEventListener("click", function () { showView("catalog"); });
+
+    document.getElementById("panicPresets").addEventListener("click", function (e) {
+      var b = e.target.closest("[data-p]");
+      if (!b) return;
+      panicPreset = b.getAttribute("data-p");
+      document.querySelectorAll("#panicPresets .pbtn").forEach(function (x) { x.classList.toggle("active", x === b); });
+      syncPanicUI();
+    });
+    document.getElementById("savePanicBtn").addEventListener("click", function () {
+      var ct = document.getElementById("customPanicTitle").value.trim();
+      var cu = document.getElementById("customPanicUrl").value.trim();
+      if (cu) { panicPreset = "custom"; customTitle = ct || "Clever | Portal"; customUrl = cu; }
+      syncPanicUI();
+    });
+    document.getElementById("recordKeyBtn").addEventListener("click", function () {
+      recordingKey = true;
+      this.textContent = "Press any key...";
+    });
+
+    window.addEventListener("keydown", function (e) {
+      if (recordingKey) {
+        recordingKey = false;
+        panicKey = e.key;
+        document.getElementById("recordKeyBtn").textContent = "Keybind: " + e.key + " (Click to Change)";
+        return;
+      }
+      if (e.key === panicKey) {
+        triggerPanic();
+        return;
+      }
+      var isPanic = !document.getElementById("panicScreen").classList.contains("hidden");
+      if (isPanic && /^[0-9]$/.test(e.key)) {
+        panicBuf += e.key;
+        if (panicBuf.length > 4) panicBuf = panicBuf.slice(-4);
+        if (panicBuf === PIN) exitPanic();
+      }
+    });
+  })();
+  </script>
+</body>
 </html>
